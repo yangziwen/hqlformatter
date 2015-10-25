@@ -7,13 +7,12 @@ define(function(require, exports, module) {
 	
 	function initEditor() {
 		editor = CodeMirror.fromTextArea($('#J_sql')[0], {
-			mode: "text/x-mysql",
-			tabMode: "indent",
-			cursorHeight: 0.8,
+			mode: 'text/x-mysql',
+			tabMode: 'indent',
+			scrollbarStyle: 'simple',
 			matchBrackets: true,
 			lineNumbers: true,
 		});
-		window.editor = editor;
 	}
 	
 	function initClearBtn() {

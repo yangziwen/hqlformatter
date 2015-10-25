@@ -6,12 +6,12 @@
 <link rel="stylesheet" href="/css/bootstrap.min.css"/>
 <link rel="stylesheet" href="/css/style.css"/>
 <link rel="stylesheet" href="/css/codemirror.css" >
+<link rel="stylesheet" href="/css/simplescrollbars.css" >
 <link rel="shortcut icon" href="/img/favicon.ico"/>
 <style>
 .CodeMirror {
 	height: 425px;
-	border-radius: 10px;
-	_font-size: 16px;
+	border-radius: 5px;
 }
 #J_sql {
 	display: none;
@@ -37,7 +37,7 @@
 			<div class="text-center">
 				<h3 style="font-family: 'Microsoft Yahei'"><strong>请输入查询SQL</strong></h3>
 			</div>
-			<div style="border: 2px solid #ccc; border-radius: 10px; height: 430px;" >
+			<div style="border: 2px solid #ccc; border-radius: 5px; height: 430px;" >
 				<textarea id="J_sql"></textarea>
 			</div>
 			<br/>
@@ -52,6 +52,7 @@
 
 <script src="/js/sea-modules/sea.js"></script>
 <script type="text/javascript" src="/js/codemirror/codemirror.js"></script>
+<script type="text/javascript" src="/js/codemirror/simplescrollbars.js"></script>
 <script type="text/javascript" src="/js/codemirror/mysql.js"></script>
 <script>
 seajs.config({
