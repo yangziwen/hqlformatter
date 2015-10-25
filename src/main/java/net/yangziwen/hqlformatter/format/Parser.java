@@ -276,6 +276,10 @@ public class Parser {
 			return null;
 		}
 		int end = nextKeyword != null? nextKeyword.start() - 1: sql.length();
+		int nextEndPos= findEndPos(sql, start);
+		if(nextEndPos < end) {
+			end = nextEndPos;
+		}
 		String str = sql.substring(start, end).trim();
 		String[] arr = str.split("\\s");
 		String tableName = arr[0];
