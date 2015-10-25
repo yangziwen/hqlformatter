@@ -25,6 +25,7 @@ public class SqlController {
 		Spark.post("/sql/format", new Route() {
 			@Override
 			public Object handle(Request request, Response response) throws Exception {
+				response.type("application/json");
 				Map<String, Object> resultMap = new HashMap<String, Object>();
 				String sql = request.queryParams("sql");
 				if(StringUtils.isBlank(sql)) {
@@ -55,6 +56,8 @@ public class SqlController {
 	
 	private static String removeComments(String sql) {
 		sql = sql.replaceAll("/\\*[\\w\\W]*?\\*/", "");
+		sql = sql.replace("\t", "    ");
+		sql += "   ";		// 解析最后一行时有个bug，这里先偷懒解决下
 		StringBuilder buff = new StringBuilder();
 		for(String line: sql.split("\n")) {
 			int commentIdx = line.indexOf("--");
