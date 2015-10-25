@@ -26,6 +26,8 @@ public class Parser {
 	
 	public static final Pattern KEYWORD_PATTERN = buildKeywordPatten(KEYWORDS);
 	
+	private Parser() {}
+	
 	private static Pattern buildKeywordPatten(String[] keywords) {
 		List<String> keywordRegexList = new ArrayList<String>();
 		for(String keyword: keywords) {
@@ -59,6 +61,7 @@ public class Parser {
 			groupByKeyword = nextKeyword;
 			nextKeyword = findKeyWord(sql, groupByKeyword.end());
 		}
+		
 		if(nextKeyword.is("union all") && nextKeyword.end() < endPos) {
 			endPos = nextKeyword.start() - 1;
 		}
