@@ -5,14 +5,21 @@
 <title>HIVE-QL格式化工具</title>
 <link rel="stylesheet" href="/css/bootstrap.min.css"/>
 <link rel="stylesheet" href="/css/style.css"/>
+<link rel="stylesheet" href="/css/codemirror.css" >
 <link rel="shortcut icon" href="/img/favicon.ico"/>
+<style>
+.CodeMirror {
+	height: 425px;
+	border-radius: 10px;
+	_font-size: 16px;
+}
+</style>
 </head>
 <body>
 <nav class="navbar navbar-default navbar-fixed-top top-bar" role="navigation">
 	<div class="container-fluit">
 		<div class="collapse navbar-collapse">
-			<div class="col-sm-4"></div>
-			<div class="col-sm-4">
+			<div class="col-xs-offset-2 col-xs-8">
 				<ul class="nav navbar-left text-center" style="margin-top:6px; width: 100%;">
 					<li class="title"><strong>HIVE-QL格式化工具</strong></li>
 				</ul>
@@ -20,9 +27,27 @@
 		</div>
 	</div>
 </nav>
-<h1>hello world</h1>
+
+<div class="container" style="margin-bottom: 50px;">
+	<div class="row"><!-- row1 -->
+		<div class="col-xs-offset-1 col-xs-10">
+			<h3 style="text-align: center; font-family: 'Microsoft Yahei'"><strong>请输入查询SQL</strong></h3>
+			<div style="border: 2px solid #ccc; border-radius: 10px; height: 430px;" >
+				<textarea id="J_sql"></textarea>
+			</div>
+			<br/>
+			<div class="text-center">
+				<button class="btn btn-primary" id="J_formatBtn">格式化</button>
+				&nbsp;
+				<button class="btn btn-primary" id="J_clearBtn">&nbsp;清&nbsp;&nbsp;空&nbsp;</button>
+			</div>
+		</div>
+	</div><!-- /row1 -->
+</div>
 
 <script src="/js/sea-modules/sea.js"></script>
+<script type="text/javascript" src="/js/codemirror/codemirror.js"></script>
+<script type="text/javascript" src="/js/codemirror/mysql.js"></script>
 <script>
 seajs.config({
 	base: '/js/',
@@ -38,6 +63,9 @@ seajs.config({
 		'jquery.cookie': 'jquery/jquery.cookie.js',
 		'bootstrap': 'bootstrap/bootstrap.min.js'
 	}
+});
+seajs.use('app/index', function(index){
+	index.init();
 });
 </script>
 </body>
