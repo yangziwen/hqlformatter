@@ -84,13 +84,19 @@ public class UnionTable implements Table {
 		}
 		buff.append(sw.getBuffer().substring(0, idx));
 		
-		for(int i = 1; i < unionTables.size(); i++) {
+		int size = unionTables.size();
+		
+		for(int i = 1; i < size; i++) {
 			buff.append("\n").append(baseIndent).append("UNION ALL")
 				.append("\n").append(baseIndent);
 			sw = new StringWriter();
 			unionTables.get(i).format(indent, nestedDepth, sw);
 			idx = sw.getBuffer().indexOf("(") + 1;
-			buff.append(sw.getBuffer().substring(idx));
+			int idx2 = sw.getBuffer().lastIndexOf(")");
+			if(idx2 == -1 || i == size - 1) {
+				idx2 = sw.getBuffer().length();
+			}
+			buff.append(sw.getBuffer().substring(idx, idx2));
 		}
 		return buff.append(" ").append(alias()).append("\n");
 	}
