@@ -15,6 +15,7 @@ public class Parser {
 		"from",
 		"join",
 		"inner join",
+		"left join",
 		"left outer join",
 		"full outer join",
 		"semi join",
