@@ -6,6 +6,8 @@ import static net.yangziwen.hqlformatter.controller.SqlController.CodeEnum.PARSE
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.alibaba.fastjson.JSON;
 
@@ -19,6 +21,10 @@ import spark.Route;
 import spark.Spark;
 
 public class SqlController {
+	
+	// 应对珠玑脚本中类似{DATE--1}表达式的例外，此情形中“--”不能视为注释
+	// 为什么第一个\\s{0,n}中的n大于3就会报错?
+	private static Pattern ARES_ESCAPE_PATTERN = Pattern.compile("(?<=\\{\\s{0,3}(HOUR|DATE|MONTH|YEAR)\\s*?)--\\s*?\\d+?\\s*?\\}", Pattern.CASE_INSENSITIVE);
 	
 	public static void init() {
 		
@@ -61,7 +67,10 @@ public class SqlController {
 		for(String line: sql.split("\n")) {
 			int commentIdx = line.indexOf("--");
 			if(commentIdx >= 0) {
-				line = line.substring(0, commentIdx);
+				Matcher matcher = ARES_ESCAPE_PATTERN.matcher(line);
+				if(!matcher.find(commentIdx)) {
+					line = line.substring(0, commentIdx);
+				}
 			}
 			buff.append(line).append("\n");
 		}
