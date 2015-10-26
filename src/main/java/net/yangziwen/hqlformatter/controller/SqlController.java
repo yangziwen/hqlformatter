@@ -33,7 +33,7 @@ public class SqlController {
 					resultMap.put("msg", ERROR_PARAM.msg());
 					return resultMap;
 				}
-				sql = removeComments(sql);
+				sql = purifySql(sql);
 				try {
 					Query query = Parser.parseQuery(sql, 0);
 					resultMap.put("code",  OK.code());
@@ -54,10 +54,9 @@ public class SqlController {
 		
 	}
 	
-	private static String removeComments(String sql) {
+	private static String purifySql(String sql) {
 		sql = sql.replaceAll("/\\*[\\w\\W]*?\\*/", "");
 		sql = sql.replace("\t", "    ");
-		sql += "   ";		// 解析最后一行时有个bug，这里先偷懒解决下
 		StringBuilder buff = new StringBuilder();
 		for(String line: sql.split("\n")) {
 			int commentIdx = line.indexOf("--");
@@ -66,7 +65,7 @@ public class SqlController {
 			}
 			buff.append(line).append("\n");
 		}
-		return sql;
+		return buff.toString() + "   ";		// 解析最后一行时有个bug，这里先偷懒解决下
 	}
 	
 	public static enum CodeEnum {
