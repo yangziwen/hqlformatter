@@ -1,21 +1,31 @@
 package net.yangziwen.hqlformatter;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.concurrent.TimeUnit;
 
 import net.yangziwen.hqlformatter.controller.SqlController;
+import net.yangziwen.hqlformatter.util.IOUtils;
 import spark.Spark;
 
 public class Server {
 	
 	public static final int DEFAULT_PORT = 8060;
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		
 		final int port = getPort();
 		
-		Spark.port(port);
+		if(!isPortAvailable("0.0.0.0", port)) {
+			System.out.println(String.format("当前端口[%d]已被占用，请按回车键退出。", port));
+			new BufferedReader(new InputStreamReader(System.in)).readLine();
+			System.exit(0);
+		}
 		
-//		Spark.ipAddress("127.0.0.1");
+		Spark.port(port);
 		
 		Spark.staticFileLocation("/static");
 		
@@ -34,7 +44,6 @@ public class Server {
 		}).start();
 		
 		initControllers();
-		
 		
 	}
 	
@@ -68,6 +77,18 @@ public class Server {
 			process.waitFor();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+	
+	private static boolean isPortAvailable(String host, int port) {
+		Socket s = new Socket();
+		try {
+			s.bind(new InetSocketAddress(host, port));
+			return true;
+		} catch (IOException e) {
+			return false;
+		} finally {
+			IOUtils.closeQuietly(s);
 		}
 	}
 

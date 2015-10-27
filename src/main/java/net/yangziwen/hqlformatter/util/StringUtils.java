@@ -8,8 +8,7 @@ public class StringUtils {
 
 	private static final int PAD_LIMIT = 8192;
 
-	private StringUtils() {
-	}
+	private StringUtils() {}
 
 	public static boolean isBlank(final CharSequence cs) {
 		int strLen;
