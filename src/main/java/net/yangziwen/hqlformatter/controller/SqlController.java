@@ -43,7 +43,8 @@ public class SqlController {
 				try {
 					Query query = Parser.parseQuery(sql, 0);
 					resultMap.put("code",  OK.code());
-					resultMap.put("data", query.toString());
+					String fomattedSql = query.toString().replaceAll("(?m)^\\s*$\\n", ""); // 暂时先去除空行
+					resultMap.put("data", fomattedSql);	
 				} catch (Exception e) {
 					System.err.println("failed to parse sql");
 					resultMap.put("code", PARSE_FAILED.code());
