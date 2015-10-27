@@ -263,7 +263,7 @@ public class Parser {
 			unionTable.addUnionTable(table);
 			nextKeyword = findKeyWord(sql, table.end());
 		}
-		int endPos = findEndBracket(sql, unionTable.lastTable().end() + 1, nextKeyword.start());
+		int endPos = findEndBracket(sql, unionTable.lastTable().end(), nextKeyword.start());
 		String alias = sql.substring(endPos + 1, nextKeyword.start()).trim();
 		return unionTable.alias(alias).start(start).end(nextKeyword.start() - 1);
 	}
@@ -273,10 +273,7 @@ public class Parser {
 	 */
 	public static SimpleTable parseSimpleTable(String sql, int start) {
 		Keyword nextKeyword = findKeyWord(sql, start);
-		if(nextKeyword.is("null")) {
-			return null;
-		}
-		int end = nextKeyword != null? nextKeyword.start() - 1: sql.length();
+		int end = !nextKeyword.is("null")? nextKeyword.start() - 1: sql.length();
 		int nextEndPos= findEndPos(sql, start);
 		if(nextEndPos < end) {
 			end = nextEndPos;
