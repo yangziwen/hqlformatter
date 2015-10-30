@@ -11,7 +11,7 @@ public class Query {
 	
 	protected List<String> selectList = new ArrayList<String>();
 	
-	protected List<Table> tableList = new ArrayList<Table>();
+	protected List<Table<?>> tableList = new ArrayList<Table<?>>();
 	
 	protected List<String> whereList = new ArrayList<String>();
 
@@ -43,7 +43,7 @@ public class Query {
 		return selectList;
 	}
 	
-	public List<Table> tableList() {
+	public List<Table<?>> tableList() {
 		return tableList;
 	}
 	
@@ -60,7 +60,7 @@ public class Query {
 		return this;
 	}
 	
-	public Query addTables(List<Table> tableList) {
+	public Query addTables(List<Table<?>> tableList) {
 		this.tableList.addAll(tableList);
 		return this;
 	}

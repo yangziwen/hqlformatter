@@ -6,64 +6,30 @@ import java.util.List;
 
 import net.yangziwen.hqlformatter.util.StringUtils;
 
-public class UnionTable implements Table {
+public class UnionTable extends AbstractTable<UnionTable> implements Table<UnionTable> {
 	
-	private List<Table> unionTables = new ArrayList<Table>();	// 按道理，这些table都应该是QueryTable
-	
-	private String alias;
-	
-	private int startPos;
-	
-	private int endPos;
+	private List<Table<?>> unionTables = new ArrayList<Table<?>>();	// 按道理，这些table都应该是QueryTable
 
 	@Override
 	public String table() {
 		List<String> tableNames = new ArrayList<String>();
-		for(Table table: unionTables) {
+		for(Table<?> table: unionTables) {
 			tableNames.add(table.table());
 		}
 		return "UnionTable[" + StringUtils.join(tableNames.toArray(), ",") + "]";
 	}
 
-	@Override
-	public String alias() {
-		return alias;
-	}
 	
-	public UnionTable alias(String alias) {
-		this.alias = alias;
-		return this;
-	}
-	
-	public UnionTable start(int startPos) {
-		this.startPos = startPos;
-		return this;
-	}
-	
-	public int start() {
-		return startPos;
-	}
-	
-	public UnionTable end(int endPos) {
-		this.endPos = endPos;
-		return this;
-	}
-
-	@Override
-	public int end() {
-		return endPos;
-	}
-	
-	public List<Table> unionTableList() {
+	public List<Table<?>> unionTableList() {
 		return unionTables;
 	}
 	
-	public Table lastTable() {
+	public Table<?> lastTable() {
 		int size = unionTables.size();
 		return unionTables.get(size - 1);
 	}
 	
-	public UnionTable addUnionTable(Table table) {
+	public UnionTable addUnionTable(Table<?> table) {
 		if(table instanceof UnionTable) {
 			UnionTable another = (UnionTable) table;
 			unionTables.addAll(another.unionTables);

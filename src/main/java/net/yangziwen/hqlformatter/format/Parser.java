@@ -44,8 +44,8 @@ public class Parser {
 		Keyword selectKeyword = findKeyWord(sql, start);
 		Keyword fromKeyword = findKeyWord(sql, selectKeyword.end());
 		
-		List<Table> tableList = parseTables(sql, fromKeyword.end());
-		Table lastTable = tableList.get(tableList.size() - 1);
+		List<Table<?>> tableList = parseTables(sql, fromKeyword.end());
+		Table<?> lastTable = tableList.get(tableList.size() - 1);
 		
 		Keyword nextKeyword = findKeyWord(sql, lastTable.end());
 		Keyword whereKeyword = null;
@@ -166,9 +166,9 @@ public class Parser {
 	/**
 	 * 解析from后的一个或多个table，包括子查询产生的临时表
 	 */
-	public static List<Table> parseTables(String sql, int start) {
-		List<Table> tables = new ArrayList<Table>();
-		Table table = parseTable(sql, start);
+	public static List<Table<?>> parseTables(String sql, int start) {
+		List<Table<?>> tables = new ArrayList<Table<?>>();
+		Table<?> table = parseTable(sql, start);
 		tables.add(table);
 		Keyword nextKeyword = findKeyWord(sql, table.end() + 1);
 		while(nextKeyword.contains("join")) {
@@ -184,14 +184,14 @@ public class Parser {
 		return tables;
 	}
 	
-	private static Table parseTable(String sql, int start) {
+	private static Table<?> parseTable(String sql, int start) {
 		int i = start;
 		char c = sql.charAt(i);
 		while (Character.isWhitespace(c)) {
 			i++;
 			c = sql.charAt(i);
 		}
-		Table table = null;
+		Table<?> table = null;
 		if(c == '(') {
 			table = parseQueryTable(sql, i + 1);
 		} else {
@@ -203,14 +203,14 @@ public class Parser {
 	/**
 	 * 解析通过join语句连接的table
 	 */
-	private static Table parseJoinTable(String sql, int start) {
+	private static Table<?> parseJoinTable(String sql, int start) {
 		Keyword nextKeyword = findKeyWord(sql, start);
 		Keyword joinKeyword = null;
 		if(nextKeyword.contains("join")) {
 			joinKeyword = nextKeyword;
 			start = joinKeyword.end();
 		}
-		Table table = parseTable(sql, start);
+		Table<?> table = parseTable(sql, start);
 		int curPos = table.end();
 		
 		// 处理join on的情形
@@ -237,7 +237,7 @@ public class Parser {
 	/**
 	 * 解析子查询产生的临时表
 	 */
-	public static Table parseQueryTable(String sql, int start) {
+	public static Table<?> parseQueryTable(String sql, int start) {
 		Query query = parseQuery(sql, start);
 		Keyword nextKeyword = findKeyWord(sql, query.end() + 1);
 		if(!nextKeyword.is("union all")) {

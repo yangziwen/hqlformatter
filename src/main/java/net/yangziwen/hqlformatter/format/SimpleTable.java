@@ -4,15 +4,9 @@ import java.io.StringWriter;
 
 import net.yangziwen.hqlformatter.util.StringUtils;
 
-public class SimpleTable implements Table {
+public class SimpleTable extends AbstractTable<SimpleTable> implements Table<SimpleTable> {
 	
 	private String table;
-	
-	private String alias;
-	
-	private int startPos = 0;
-	
-	private int endPos = 0;
 	
 	public SimpleTable(String table, String alias, int startPos, int endPos) {
 		this.table = table;
@@ -24,34 +18,6 @@ public class SimpleTable implements Table {
 	@Override
 	public String table() {
 		return table;
-	}
-	
-	public SimpleTable table(String table) {
-		this.table = table;
-		return this;
-	}
-
-	@Override
-	public String alias() {
-		return alias;
-	}
-	
-	public SimpleTable alias(String alias) {
-		this.alias = alias;
-		return this;
-	}
-	
-	public int start() {
-		return startPos;
-	}
-	
-	public int end() {
-		return endPos;
-	}
-	
-	public SimpleTable end(int endPos) {
-		this.endPos = endPos;
-		return this;
 	}
 	
 	@Override
