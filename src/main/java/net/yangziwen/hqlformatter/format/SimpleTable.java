@@ -31,6 +31,9 @@ public class SimpleTable extends AbstractTable<SimpleTable> implements Table<Sim
 		if(StringUtils.isNotBlank(alias())) {
 			writer.append(" ").append(alias());
 		}
+		if(headComment != null) {
+			writer.append("  ").append(headComment().content());
+		}
 		return writer;
 	}
 

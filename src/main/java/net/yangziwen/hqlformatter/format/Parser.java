@@ -274,8 +274,10 @@ public class Parser {
 				nextEndPos = nextKeyword.start();
 			}
 			String alias = sql.substring(endPos + 1, nextEndPos).trim().split("\\s+")[0];
-			return new QueryTable(query).alias(alias)
+			QueryTable queryTable = new QueryTable(query).alias(alias)
 					.start(start).end(endPos + alias.length());
+			queryTable.tailComment(catchComment(sql, queryTable.end()));
+			return queryTable;
 		}
 		// 处理union all的情形
 		Keyword unionKeyword = nextKeyword;
@@ -319,7 +321,7 @@ public class Parser {
 		Matcher matcher = KEYWORD_PATTERN.matcher(sql);
 		if(matcher.find(start)) {
 			Keyword keyword = cacheKeyword(new Keyword(matcher.group(1), matcher.start(1), matcher.end(1)));
-			catchComment(sql, keyword);
+			keyword.comment(catchComment(sql, keyword.end()));
 			return keyword;
 		}
 		return Keyword.returnNull(sql);
@@ -331,15 +333,15 @@ public class Parser {
 		return mapper.get(keyword.start());
 	}
 	
-	private static void catchComment(String sql, Keyword keyword) {
+	private static Comment catchComment(String sql, int start) {
 		
-		int crlfIdx = findCrlf(sql, keyword.end());
+		int crlfIdx = findCrlf(sql, start);
 		
 		if(crlfIdx == -1) {
-			return;
+			return null;
 		}
 		
-		String str = sql.substring(keyword.end(), crlfIdx);
+		String str = sql.substring(start, crlfIdx);
 		
 		int commentIdx = str.indexOf("--");
 		
@@ -348,16 +350,14 @@ public class Parser {
 		}
 		
 		if(commentIdx == -1) {
-			return;
+			return null;
 		}
 		
-		Comment comment = new Comment()
+		return new Comment()
 			.content(str.substring(commentIdx))
-			.start(keyword.end() + commentIdx)
+			.start(start + commentIdx)
 			.end(crlfIdx)
 		;
-		
-		keyword.comment(comment);
 		
 	}
 	

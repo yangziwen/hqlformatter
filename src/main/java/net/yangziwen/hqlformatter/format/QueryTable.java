@@ -34,6 +34,9 @@ public class QueryTable extends AbstractTable<QueryTable> implements Table<Query
 		if(StringUtils.isNotBlank(alias())) {
 			writer.append(" ").append(alias());
 		}
+		if(tailComment() != null) {
+			writer.append("  ").append(tailComment().content());
+		}
 		return writer;
 	}
 
