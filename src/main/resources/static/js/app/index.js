@@ -12,6 +12,7 @@ define(function(require, exports, module) {
 			scrollbarStyle: 'simple',
 			matchBrackets: true,
 			lineNumbers: true,
+			indentUnit: 4
 		});
 	}
 	

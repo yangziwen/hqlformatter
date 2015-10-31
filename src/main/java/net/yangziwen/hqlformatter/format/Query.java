@@ -139,7 +139,14 @@ public class Query {
 		writer.append("\n").append(StringUtils.repeat(indent, nestedDepth))
 			.append("WHERE ").append(whereList.get(0));
 		for(int i = 1; i < whereList.size(); i++) {
-			writer.append(sep).append("AND ").append(whereList.get(i));
+			// 支持where语句中进行单行注释，如下
+			// -- AND t.manager_type = 'XXX'
+			if(!whereList.get(i-1).endsWith("--")) {
+				writer.append(sep);
+			} else {
+				writer.append(" ");
+			}
+			writer.append("AND ").append(whereList.get(i));
 		}
 		return this;
 	}

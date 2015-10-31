@@ -349,6 +349,13 @@ public class Parser {
 			commentIdx = str.indexOf("--", commentIdx + 2);
 		}
 		
+		Keyword nextKeyword = findKeyWord(sql, start);
+		if(!nextKeyword.is("null")) {
+			if(commentIdx + start > nextKeyword.start()) {
+				return null;
+			}
+		}
+		
 		if(commentIdx == -1) {
 			return null;
 		}
