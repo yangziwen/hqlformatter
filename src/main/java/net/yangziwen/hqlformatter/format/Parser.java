@@ -41,7 +41,7 @@ public class Parser {
 		for(String keyword: keywords) {
 			keywordRegexList.add(keyword.replace(" ", "\\s+?"));
 		}
-		return Pattern.compile("(?<=^|[^\\w\\d])(" + StringUtils.join(keywordRegexList, "|") + ")[^\\w\\d]", Pattern.CASE_INSENSITIVE);
+		return Pattern.compile("(?<=^|[^_\\-0-9a-zA-Z\u4e00-\u9fa5])(" + StringUtils.join(keywordRegexList, "|") + ")(?=[^_\\-0-9a-zA-Z\u4e00-\u9fa5])", Pattern.CASE_INSENSITIVE);
 	}
 	
 	public static Query parseSelectSql(String sql) {

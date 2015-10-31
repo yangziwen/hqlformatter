@@ -40,13 +40,22 @@ define(function(require, exports, module) {
 	}
 	
 	function doFormatSql(sql) {
-		$.post('/sql/format', {sql: sql}, function(result) {
-			if(result.code !== 0) {
-				common.alertMsg(result.msg || '格式化失败，请检查sql语法!');
-				return;
+		$.ajax({
+			type: 'POST',
+			url: '/sql/format',
+			data: {sql, sql},
+			success: function(result) {
+				if(result.code !== 0) {
+					common.alertMsg(result.msg || '格式化失败，请检查sql语法!');
+					return;
+				}
+				var sql = result.data;
+				editor.setValue(sql);
+			},
+			error: function() {
+				common.alertMsg('请求失败，请检查是否已开启格式化工具!');
 			}
-			var sql = result.data;
-			editor.setValue(sql);
+			
 		});
 	}
 	
