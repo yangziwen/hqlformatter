@@ -4,18 +4,20 @@ import net.yangziwen.hqlformatter.util.StringUtils;
 
 public class Keyword {
 	
-	public Keyword() {}
-	
-	public Keyword(String name, int start, int end) {
-		this.name(name).start(start).end(end);
-	}
-
 	private String name;
 	
 	private int start;
 	
 	private int end;
 	
+	private Comment comment;
+	
+	public Keyword() {}
+	
+	public Keyword(String name, int start, int end) {
+		this.name(name).start(start).end(end);
+	}
+
 	public String name() {
 		return name;
 	}
@@ -41,6 +43,15 @@ public class Keyword {
 	
 	public Keyword end(int end) {
 		this.end = end;
+		return this;
+	}
+	
+	public Comment comment() {
+		return this.comment;
+	}
+	
+	public Keyword comment(Comment comment) {
+		this.comment = comment;
 		return this;
 	}
 	

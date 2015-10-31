@@ -8,6 +8,8 @@ public abstract class AbstractTable<T extends Table<T>> implements Table<T> {
 	
 	protected int endPos;
 	
+	protected Comment comment;
+	
 	@Override
 	public String alias() {
 		return alias;
@@ -36,6 +38,16 @@ public abstract class AbstractTable<T extends Table<T>> implements Table<T> {
 	@SuppressWarnings("unchecked")
 	public T end(int endPos) {
 		this.endPos = endPos;
+		return (T) this;
+	}
+	
+	public Comment comment() {
+		return this.comment;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public T comment(Comment comment) {
+		this.comment = comment;
 		return (T) this;
 	}
 	

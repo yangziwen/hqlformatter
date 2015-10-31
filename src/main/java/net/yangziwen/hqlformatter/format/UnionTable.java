@@ -54,9 +54,9 @@ public class UnionTable extends AbstractTable<UnionTable> implements Table<Union
 		
 		for(int i = 1; i < size; i++) {
 			buff.append("\n")
-				.append(baseIndent).append("---------").append("\n")
+//				.append(baseIndent).append("---------").append("\n")
 				.append(baseIndent).append("UNION ALL").append("\n")
-				.append(baseIndent).append("---------").append("\n")
+//				.append(baseIndent).append("---------").append("\n")
 				.append("\n").append(baseIndent);
 			sw = new StringWriter();
 			unionTables.get(i).format(indent, nestedDepth, sw);

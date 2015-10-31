@@ -18,7 +18,9 @@ public interface Table<T extends Table<T>> {
 	
 	public T end(int endPos);
 	
-//	public String comment();
+	public Comment comment();
+	
+	public T comment(Comment comment);
 	
 	public StringWriter format(String indent, int nestedDepth, StringWriter writer);
 	

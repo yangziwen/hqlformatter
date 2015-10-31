@@ -6,8 +6,6 @@ import static net.yangziwen.hqlformatter.controller.SqlController.CodeEnum.PARSE
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.alibaba.fastjson.JSON;
 
@@ -21,10 +19,6 @@ import spark.Route;
 import spark.Spark;
 
 public class SqlController {
-	
-	// 应对珠玑脚本中类似{DATE--1}表达式的例外，此情形中“--”不能视为注释
-	// 为什么第一个\\s{0,n}中的n大于3就会报错?
-	private static Pattern ARES_ESCAPE_PATTERN = Pattern.compile("(?<=\\{\\s{0,3}(HOUR|DATE|MONTH|YEAR)\\s*?)--\\s*?\\d+?\\s*?\\}", Pattern.CASE_INSENSITIVE);
 	
 	public static void init() {
 		
@@ -41,7 +35,7 @@ public class SqlController {
 				}
 				sql = purifySql(sql);
 				try {
-					Query query = Parser.parseQuery(sql, 0);
+					Query query = Parser.parseSelectSql(sql);
 					resultMap.put("code",  OK.code());
 					String fomattedSql = query.toString().replaceAll("(?m)^\\s*$\\n", ""); // 暂时先去除空行
 					resultMap.put("data", fomattedSql);	
@@ -64,18 +58,7 @@ public class SqlController {
 	private static String purifySql(String sql) {
 		sql = sql.replaceAll("/\\*[\\w\\W]*?\\*/", "");
 		sql = sql.replace("\t", "    ");
-		StringBuilder buff = new StringBuilder();
-		for(String line: sql.split("\n")) {
-			int commentIdx = line.indexOf("--");
-			if(commentIdx >= 0) {
-				Matcher matcher = ARES_ESCAPE_PATTERN.matcher(line);
-				if(!matcher.find(commentIdx)) {
-					line = line.substring(0, commentIdx);
-				}
-			}
-			buff.append(line).append("\n");
-		}
-		return buff.toString() + "   ";		// 解析最后一行时有个bug，这里先偷懒解决下
+		return sql + "   ";
 	}
 	
 	public static enum CodeEnum {
