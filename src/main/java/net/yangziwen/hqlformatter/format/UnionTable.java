@@ -8,6 +8,8 @@ import net.yangziwen.hqlformatter.util.StringUtils;
 
 public class UnionTable extends AbstractTable<UnionTable> implements Table<UnionTable> {
 	
+	private List<Keyword> unionKeywords = new ArrayList<Keyword>();
+	
 	private List<Table<?>> unionTables = new ArrayList<Table<?>>();	// 按道理，这些table都应该是QueryTable
 
 	@Override
@@ -18,7 +20,18 @@ public class UnionTable extends AbstractTable<UnionTable> implements Table<Union
 		}
 		return "UnionTable[" + StringUtils.join(tableNames.toArray(), ",") + "]";
 	}
-
+	
+	public List<Keyword> unionKeywordList() {
+		return unionKeywords;
+	}
+	
+	public UnionTable addUnionKeyword(Keyword keyword) {
+		if(!keyword.contains("union")) {
+			throw new IllegalStateException(String.format("%s is not a union keyword!", keyword));
+		}
+		unionKeywords.add(keyword);
+		return this;
+	}
 	
 	public List<Table<?>> unionTableList() {
 		return unionTables;
@@ -38,6 +51,17 @@ public class UnionTable extends AbstractTable<UnionTable> implements Table<Union
 		}
 		return this;
 	}
+	
+	@Override
+	public Comment headComment() {
+		return unionTables.get(0).headComment();
+	}
+	
+	@Override
+	public UnionTable headComment(Comment comment) {
+		unionTables.get(0).headComment(comment);
+		return this;
+	}
 
 	@Override
 	public StringWriter format(String indent, int nestedDepth, StringWriter buff) {
@@ -53,11 +77,15 @@ public class UnionTable extends AbstractTable<UnionTable> implements Table<Union
 		int size = unionTables.size();
 		
 		for(int i = 1; i < size; i++) {
-			buff.append("\n")
-//				.append(baseIndent).append("---------").append("\n")
-				.append(baseIndent).append("UNION ALL").append("\n")
-//				.append(baseIndent).append("---------").append("\n")
-				.append("\n").append(baseIndent);
+			buff.append("\n");
+			buff.append(baseIndent).append("UNION ALL");
+			
+			Comment comment = unionKeywords.get(i - 1).comment();
+			if(comment != null) {
+				buff.append("  ").append(comment.content());
+			}
+			
+			buff.append("\n").append(baseIndent);
 			sw = new StringWriter();
 			unionTables.get(i).format(indent, nestedDepth, sw);
 			idx = sw.getBuffer().indexOf("(") + 1;

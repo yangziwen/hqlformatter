@@ -41,6 +41,7 @@ public class SqlController {
 					resultMap.put("data", fomattedSql);	
 				} catch (Exception e) {
 					System.err.println("failed to parse sql");
+					e.printStackTrace();
 					resultMap.put("code", PARSE_FAILED.code());
 					resultMap.put("msg", PARSE_FAILED.msg());
 				}

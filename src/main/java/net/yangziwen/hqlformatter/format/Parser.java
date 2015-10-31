@@ -32,7 +32,6 @@ public class Parser {
 	// 为什么第一个\\s{0,n}中的n大于3就会报错?
 	private static Pattern ARES_ESCAPE_PATTERN = Pattern.compile("(?<=\\{\\s{0,3}(HOUR|DATE|MONTH|YEAR)\\s*?)--\\s*?\\d+?\\s*?\\}", Pattern.CASE_INSENSITIVE);
 	
-	
 	private static final ThreadLocal<ConcurrentHashMap<Integer, Keyword>> KEYWORD_MAPPER_HOLDER = new ThreadLocal<ConcurrentHashMap<Integer,Keyword>>();
 	
 	private Parser() {}
@@ -58,6 +57,9 @@ public class Parser {
 		Keyword fromKeyword = findKeyWord(sql, selectKeyword.end());
 		
 		List<Table<?>> tableList = parseTables(sql, fromKeyword.end());
+		
+		tableList.get(0).headComment(fromKeyword.comment());
+		
 		Table<?> lastTable = tableList.get(tableList.size() - 1);
 		
 		Keyword nextKeyword = findKeyWord(sql, lastTable.end());
@@ -241,7 +243,7 @@ public class Parser {
 		// 处理join on的情形
 		if(joinKeyword != null) {
 			JoinTable joinTable = new JoinTable()
-				.baseTable(table)
+				.baseTable(table.headComment(joinKeyword.comment()))
 				.joinType(joinKeyword);	
 			nextKeyword = findKeyWord(sql, curPos);
 			if(nextKeyword.is("on")) {
@@ -285,7 +287,7 @@ public class Parser {
 			unionKeyword = nextKeyword;
 			query = parseQuery(sql, unionKeyword.end() + 1);
 			table = new QueryTable(query).start(unionKeyword.end() + 1).end(query.end());
-			unionTable.addUnionTable(table);
+			unionTable.addUnionKeyword(unionKeyword).addUnionTable(table);
 			nextKeyword = findKeyWord(sql, table.end());
 		}
 		int endPos = findEndBracket(sql, unionTable.lastTable().end(), nextKeyword.start());

@@ -24,7 +24,11 @@ public class QueryTable extends AbstractTable<QueryTable> implements Table<Query
 
 	@Override
 	public StringWriter format(String indent, int nestedDepth, StringWriter writer) {
-		writer.append("(").append("\n").append(StringUtils.repeat(indent, nestedDepth));
+		writer.append("(");
+		if(headComment() != null) {
+			writer.append("  ").append(headComment().content());
+		}
+		writer.append("\n").append(StringUtils.repeat(indent, nestedDepth));
 		query.format(indent, nestedDepth, writer);
 		writer.append("\n").append(StringUtils.repeat(indent, nestedDepth - 1)).append(")");
 		if(StringUtils.isNotBlank(alias())) {
