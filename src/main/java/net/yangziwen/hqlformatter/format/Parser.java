@@ -3,7 +3,6 @@ package net.yangziwen.hqlformatter.format;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,8 +31,6 @@ public class Parser {
 	// 为什么第一个\\s{0,n}中的n大于3就会报错?
 	private static Pattern ARES_ESCAPE_PATTERN = Pattern.compile("(?<=\\{\\s{0,3}(HOUR|DATE|MONTH|YEAR)\\s*?)--\\s*?\\d+?\\s*?\\}", Pattern.CASE_INSENSITIVE);
 	
-	private static final ThreadLocal<ConcurrentHashMap<Integer, Keyword>> KEYWORD_MAPPER_HOLDER = new ThreadLocal<ConcurrentHashMap<Integer,Keyword>>();
-	
 	private Parser() {}
 	
 	private static Pattern buildKeywordPatten(String[] keywords) {
@@ -41,11 +38,10 @@ public class Parser {
 		for(String keyword: keywords) {
 			keywordRegexList.add(keyword.replace(" ", "\\s+?"));
 		}
-		return Pattern.compile("(?<=^|[^_\\-0-9a-zA-Z\u4e00-\u9fa5])(" + StringUtils.join(keywordRegexList, "|") + ")(?=[^_\\-0-9a-zA-Z\u4e00-\u9fa5])", Pattern.CASE_INSENSITIVE);
+		return Pattern.compile("(?<=^|[^_\\-0-9a-zA-Z\u4e00-\u9fa5])(" + StringUtils.join(keywordRegexList, "|") + ")(?=[^_0-9a-zA-Z\u4e00-\u9fa5])", Pattern.CASE_INSENSITIVE);
 	}
 	
 	public static Query parseSelectSql(String sql) {
-		KEYWORD_MAPPER_HOLDER.set(new ConcurrentHashMap<Integer, Keyword>());
 		return parseQuery(sql, 0);
 	}
 	
@@ -202,10 +198,10 @@ public class Parser {
 	private static Table<?> parseTable(String sql, int start) {
 		int i = start;
 		char c = sql.charAt(i);
-		while (Character.isWhitespace(c)) {
+		while (Character.isWhitespace(c) || '-' == c) {
 			i++;
 			c = sql.charAt(i);
-			if(c == '-' && sql.charAt(i + 1) == '-') {	// 处理行末的注释
+			if(c == '-') {	// 处理行末的注释
 				int crlfIdx = findCrlf(sql, i + 1);
 				if(crlfIdx == -1) {
 					break;
@@ -318,19 +314,19 @@ public class Parser {
 	}
 	
 	private static Keyword findKeyWord(String sql, int start) {
+		return findKeyWord(sql, start, false);
+	}
+	
+	private static Keyword findKeyWord(String sql, int start, boolean ignoreComment) {
 		Matcher matcher = KEYWORD_PATTERN.matcher(sql);
 		if(matcher.find(start)) {
-			Keyword keyword = cacheKeyword(new Keyword(matcher.group(1), matcher.start(1), matcher.end(1)));
-			keyword.comment(catchComment(sql, keyword.end()));
+			Keyword keyword = new Keyword(matcher.group(1), matcher.start(1), matcher.end(1));
+			if(!ignoreComment) {	// 避免捕获comment时，递归的查找后面所有的keyword
+				keyword.comment(catchComment(sql, keyword.end()));
+			}
 			return keyword;
 		}
 		return Keyword.returnNull(sql);
-	}
-	
-	private static Keyword cacheKeyword(Keyword keyword) {
-		ConcurrentHashMap<Integer, Keyword> mapper = KEYWORD_MAPPER_HOLDER.get();
-		mapper.putIfAbsent(keyword.start(), keyword);
-		return mapper.get(keyword.start());
 	}
 	
 	private static Comment catchComment(String sql, int start) {
@@ -349,7 +345,7 @@ public class Parser {
 			commentIdx = str.indexOf("--", commentIdx + 2);
 		}
 		
-		Keyword nextKeyword = findKeyWord(sql, start);
+		Keyword nextKeyword = findKeyWord(sql, start, true);
 		if(!nextKeyword.is("null")) {
 			if(commentIdx + start > nextKeyword.start()) {
 				return null;
