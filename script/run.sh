@@ -1,0 +1,1 @@
+java -Xms10m -Xmx10m -XX:MaxPermSize=5m -Dport=8060 -DautoOpen=true -jar hqlformatter.jar

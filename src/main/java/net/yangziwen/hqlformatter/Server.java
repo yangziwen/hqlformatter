@@ -71,7 +71,9 @@ public class Server {
 		if(!Boolean.TRUE.equals(autoOpen)) {
 			return;
 		}
-		String cmd = "cmd /c start " + url;
+		String cmd = isWindows()
+				? "cmd /c start " + url
+				: "firefox " + url;
 		try {
 			Process process = Runtime.getRuntime().exec(cmd);
 			process.waitFor();
@@ -90,6 +92,14 @@ public class Server {
 		} finally {
 			IOUtils.closeQuietly(s);
 		}
+	}
+	
+	private static boolean isWindows() {
+		String osName = System.getProperty("os.name");
+		if(osName == null || osName.trim().length() == 0) {
+			return false;
+		}
+		return osName.startsWith("Windows");
 	}
 
 }
