@@ -13,6 +13,18 @@
 	height: 425px;
 	border-radius: 5px;
 }
+.cm-s-default .cm-keyword {
+	color: rgb(17,50,133);
+}
+.cm-s-default .cm-variable {
+	color: #333;
+}
+.cm-s-default .cm-comment {
+	color: rgb(27,129,62);
+}
+div.CodeMirror span.CodeMirror-matchingbracket{
+	font-weight: bold;
+}
 #J_sql {
 	display: none;
 }
@@ -53,20 +65,13 @@
 <script src="/js/sea-modules/sea.js"></script>
 <script type="text/javascript" src="/js/codemirror/codemirror.js"></script>
 <script type="text/javascript" src="/js/codemirror/simplescrollbars.js"></script>
+<script type="text/javascript" src="/js/codemirror/matchbrackets.js"></script>
 <script type="text/javascript" src="/js/codemirror/mysql.js"></script>
 <script>
 seajs.config({
 	base: '/js/',
-	paths: {
-		'jquery': '/js/jquery',
-		'bootstrap': '/js/bootstrap',
-		'app': '/js/app',
-	},
 	alias: {
 		'jquery': 'jquery/jquery.js',
-		'jquery.tmpl': 'jquery/jquery.tmpl.js',
-		'jquery.validate': 'jquery/jquery.validate.js',
-		'jquery.cookie': 'jquery/jquery.cookie.js',
 		'bootstrap': 'bootstrap/bootstrap.min.js'
 	}
 });

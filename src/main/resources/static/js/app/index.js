@@ -43,7 +43,7 @@ define(function(require, exports, module) {
 		$.ajax({
 			type: 'POST',
 			url: '/sql/format',
-			data: {sql, sql},
+			data: {sql: sql},
 			success: function(result) {
 				if(result.code !== 0) {
 					common.alertMsg(result.msg || '格式化失败，请检查sql语法!');
@@ -59,13 +59,12 @@ define(function(require, exports, module) {
 		});
 	}
 	
+	function init() {
+		initEditor();
+		initClearBtn();
+		initFormatBtn();
+	}
 	
+	module.exports = {init: init};
 	
-	module.exports = {
-		init: function() {
-			initEditor();
-			initClearBtn();
-			initFormatBtn();
-		}
-	};
 });
