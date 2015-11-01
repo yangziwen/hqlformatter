@@ -1,11 +1,24 @@
 define(function(require, exports, module) {
 	
+	"use strict";
+	
 	var common = require('app/common'),
 		$ = require('jquery');
 	
 	var editor = null;
 	
 	function initEditor() {
+		
+		//-- 让CodeMirror对屏幕的高度自适应 --//
+		var defaultWinHeight = 700,
+			minCmHeight = 425;
+		var $wrapper = $('#J_sql').parent();
+		var cmHeight = $(window).height() - defaultWinHeight + $wrapper.height();
+		if(cmHeight > minCmHeight) {
+			$wrapper.height(cmHeight);
+			$(document.head).append('<style>.CodeMirror{height:' + cmHeight + 'px;}</style>');
+		}
+		
 		editor = CodeMirror.fromTextArea($('#J_sql')[0], {
 			mode: 'text/x-mysql',
 			tabMode: 'indent',
