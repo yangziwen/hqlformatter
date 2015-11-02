@@ -9,15 +9,9 @@ define(function(require, exports, module) {
 	
 	function initEditor() {
 		
-		//-- 让CodeMirror对屏幕的高度自适应 --//
-		var defaultWinHeight = 700,
-			minCmHeight = 425;
-		var $wrapper = $('#J_sql').parent();
-		var cmHeight = $(window).height() - defaultWinHeight + $wrapper.height();
-		if(cmHeight > minCmHeight) {
-			$wrapper.height(cmHeight);
-			$(document.head).append('<style>.CodeMirror{height:' + cmHeight + 'px;}</style>');
-		}
+		resizeCodeMirror();
+		
+		$(window).on('resize', resizeCodeMirror);
 		
 		editor = CodeMirror.fromTextArea($('#J_sql')[0], {
 			mode: 'text/x-mysql',
@@ -27,6 +21,21 @@ define(function(require, exports, module) {
 			lineNumbers: true,
 			indentUnit: 4
 		});
+	}
+	
+	function resizeCodeMirror() {
+		//-- 让CodeMirror对屏幕的高度自适应 --//
+		var defaultWinHeight = 700,
+			minCmHeight = 425;
+		var $wrapper = $('#J_sql').parent();
+		var cmHeight = $(window).height() - defaultWinHeight + minCmHeight;
+		if(cmHeight > minCmHeight) {
+			$('style').filter(function(i, v) {
+				return /^\.CodeMirror\{height:\d+px;\}$/.test($(v).html())
+			}).remove();
+			$wrapper.height(cmHeight);
+			$(document.head).append('<style>.CodeMirror{height:' + cmHeight + 'px;}</style>');
+		}
 	}
 	
 	function initClearBtn() {
