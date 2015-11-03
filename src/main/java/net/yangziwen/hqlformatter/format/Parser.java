@@ -182,6 +182,9 @@ public class Parser {
 		Table<?> table = parseTable(sql, start);
 		tables.add(table);
 		Keyword nextKeyword = findKeyWord(sql, table.end() + 1);
+		if(findEndBracket(sql, table.end(), nextKeyword.start()) > 0) {
+			return tables;
+		}
 		while(nextKeyword.contains("join")) {
 			table = parseJoinTable(sql, table.end() + 1);
 			if(table != null) {
