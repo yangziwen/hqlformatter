@@ -72,12 +72,16 @@ seajs.config({
 	base: '/js/',
 	alias: {
 		'jquery': 'jquery/jquery.js',
-		'bootstrap': 'bootstrap/bootstrap.min.js'
+		'bootstrap': 'bootstrap/bootstrap.min.js',
+		'underscore': 'underscore/underscore.js'
 	}
 });
 seajs.use('app/index', function(index){
 	index.init();
 });
+seajs.use('app/test', function(test){
+	test.run();
+})
 </script>
 </body>
 </html>
