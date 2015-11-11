@@ -139,6 +139,18 @@ define(function(require, exports, module) {
 		},
 		getLastTable: function() {
 			return _.last(this._unionTables);
+		},
+		headComment: function(comment) {
+			if(this.getFirstTable()) {
+				this.getFirstTable().headComment(comment);
+			}
+			return this;
+		},
+		getHeadComment: function() {
+			if(!this.getFirstTable()) {
+				return null;
+			}
+			return this.getFirstTable().getHeadComment();
 		}
 	});
 	
