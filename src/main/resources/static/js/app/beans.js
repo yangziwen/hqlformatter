@@ -64,7 +64,7 @@ define(function(require, exports, module) {
 			return this;
 		},
 		getHeadComment() {
-			return this._headCommend || null;
+			return this._headComment || null;
 		},
 		tailComment(comment) {
 			this._tailComment = comment;
