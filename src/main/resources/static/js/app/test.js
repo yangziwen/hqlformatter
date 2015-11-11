@@ -2,39 +2,59 @@ define(function(require, exports, module) {
 	
 	// "use strict";
 	
-	var beans = require('app/beans');
+	var model = require('app/model');
 	
 	function testKeyword() {
-		var assertInfo = getBeanAssertion('Assertion of keyword {} failed');
-		var selectKeyword = beans.createKeyword().name('select').start(0).end(5).comment('test');
+		var assertFailed = getFailedAssertion('Assertion of keyword {} failed');
+		var selectKeyword = model.createKeyword()
+			.name('select')
+			.start(0).end(5)
+			.comment('test');
 		with(console){with(selectKeyword) {
-			assert(getName() === 'select', assertInfo('name'));
-			assert(getStart() === 0, assertInfo('start'));
-			assert(getEnd() === 5, assertInfo('end'));
-			assert(getComment() === 'test', assertInfo('comment'));
+			assert(getName() === 'select', assertFailed('name'));
+			assert(getStart() === 0, assertFailed('start'));
+			assert(getEnd() === 5, assertFailed('end'));
+			assert(getComment() === 'test', assertFailed('comment'));
 		}}
 	}
 	
 	function testSimpleTable() {
-		var assertInfo = getBeanAssertion('Assertion of simpleTable {} failed');
-		var comment = beans.createComment().content('test');
-		var simpleTable = beans.createSimpleTable()
-			.table('daily_sign').alias('ds')
+		var assertFailed = getFailedAssertion('Assertion of simpleTable {} failed');
+		var comment = model.createComment().content('test');
+		var simpleTable = model.createSimpleTable()
+			.table('test_tbl').alias('tt')
 			.start(100).end(110)
 			.headComment(comment).tailComment(comment);
 		with(console){with(simpleTable) {
-			assert(getTable() === 'daily_sign', assertInfo('table'));
-			assert(getAlias() === 'ds', assertInfo('alias'));
-			assert(getStart() === 100, assertInfo('start'));
-			assert(getEnd() === 110, assertInfo('end'));
-			assert(getHeadComment() === comment, assertInfo('headComment'));
-			assert(getTailComment() === comment, assertInfo('tailComment'));
+			assert(getTable() === 'test_tbl', assertFailed('table'));
+			assert(getAlias() === 'tt', assertFailed('alias'));
+			assert(getStart() === 100, assertFailed('start'));
+			assert(getEnd() === 110, assertFailed('end'));
+			assert(getHeadComment() === comment, assertFailed('headComment'));
+			assert(getTailComment() === comment, assertFailed('tailComment'));
 		}}
 	}
 	
-	function getBeanAssertion(clause) {
+	function testJoinTable() {
+		var assertFailed = getFailedAssertion('Assertion of joinTable {} failed');
+		var keyword = model.createKeyword().name('inner join');
+		var tbl = model.createSimpleTable()
+			.table('test_tbl').alias('tt');
+		var joinTable = model.createJoinTable()
+			.baseTable(tbl)
+			.joinKeyword(keyword)
+			.addJoinOns('t1.name = t2.name', 't1.day = t2.day')
+			.addJoinOns(['t1.org_id = t2.org_id', 't1.type = t2.type']);
+		with(console){with(joinTable){
+			assert(getBaseTable() === tbl, assertFailed('baseTable'));
+			assert(getJoinKeyword() === keyword, assertFailed('joinKeyword'));
+			assert(getJoinOns().length === 4, assertFailed('joinOns'));
+		}}
+	}
+	
+	function getFailedAssertion(msg) {
 		return function(field) {
-			return clause.replace(/\{\}/, field);
+			return msg.replace(/\{\}/, field);
 		}
 	}
 	
@@ -42,6 +62,7 @@ define(function(require, exports, module) {
 		run: function() {
 			testKeyword();
 			testSimpleTable();
+			testJoinTable();
 		}
 	};
 	

@@ -107,22 +107,38 @@ define(function(require, exports, module) {
 			var table = this._baseTable? this._baseTable.getTable(): null;
 			return 'JoinTable[' + table + ']';
 		},
-		addJoinOns: function () {
-			this.ensureArray('_joinOnList').concat(argument);
+		addJoinOns: function (list) {
+			!_.isArray(list) && (list = _.toArray(arguments));
+			this._joinOns = this.ensureArray('_joinOns').concat(list);
 			return this;
 		},
 		getJoinOns: function() {
-			return this.ensureArray('_joinOnList');
+			return this.ensureArray('_joinOns');
 		}
 	});
 	
 	var UnionTable = extendClass(AbstractTable, {
-		addUnionKeywords: function() {
-			this.ensureArray('_unionKeywords').concat(arguments);
+		addUnionKeywords: function(list) {
+			!_.isArray(list) && (list = _.toArray(arguments));
+			this._unionKeywords = this.ensureArray('_unionKeywords').concat(list);
 			return this;
 		},
 		getUnionKeywords: function() {
 			return this.ensureArray('_unionKeywords');
+		},
+		addUnionTables: function(list) {
+			!_.isArray(list) && (list = _.toArray(arguments));
+			this._unionTables = this.ensureArray('_unionTables').concat(list);
+			return this;
+		},
+		getUnionTables: function() {
+			return this.ensureArray('_unionTables');
+		},
+		getFirstTable: function() {
+			return _.first(this._unionTables);
+		},
+		getLastTable: function() {
+			return _.last(this._unionTables);
 		}
 	});
 	
@@ -145,29 +161,33 @@ define(function(require, exports, module) {
 	});
 	
 	var Query = extendClass(Base, {
-		addSelects: function() {
-			this.ensureArray('_selects').concat(arguments);
+		addSelects: function(list) {
+			!_.isArray(list) && (list = _.toArray(arguments));
+			this._selects = this.ensureArray('_selects').concat(list);
 			return this;
 		},
 		getSelects: function() {
 			return this.ensureArray('_selects');
 		},
-		addTables: function() {
-			this.ensureArray('_tables').concat(arguments);
+		addTables: function(list) {
+			!_.isArray(list) && (list = _.toArray(arguments));
+			this._tables = this.ensureArray('_tables').concat(list);
 			return this;
 		},
 		getTables: function() {
 			return this.ensureArray('_tables');
 		},
-		addWheres: function() {
-			this.ensureArray('_wheres').concat(arguments);
+		addWheres: function(list) {
+			!_.isArray(list) && (list = _.toArray(arguments));
+			this._wheres = this.ensureArray('_wheres').concat(list);
 			return this;
 		},
 		getWheres: function() {
 			return this.ensureArray('_wheres');
 		},
-		addGroupBys: function() {
-			this.ensureArray('_groupBys').concat(arguments);
+		addGroupBys: function(list) {
+			!_.isArray(list) && (list = _.toArray(arguments));
+			this._groupBys = this.ensureArray('_groupBys').concat(list);
 			return this;
 		},
 		getGroupBys: function() {
