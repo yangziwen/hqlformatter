@@ -102,9 +102,6 @@ define(function(require, exports, module) {
 		var table = parseTable(sql, start);
 		tables.push(table);
 		var nextKeyword = findKeyword(sql, table.getEnd() + 1);
-		if(findEndBracket(sql, table.getEnd(), nextKeyword.getStart()) > 0) {
-			return tables;
-		}
 		while(nextKeyword.contains('join')) {
 			table = parseJoinTable(sql, table.getEnd() + 1);
 			if(table != null) {
@@ -138,7 +135,7 @@ define(function(require, exports, module) {
 			}
 		}
 		return c == '('
-			? parseQueryTable(sql, i + 1)
+			? parseQueryTable(sql, i)
 			: parseSimpleTable(sql, i);
 	}
 	
@@ -163,7 +160,7 @@ define(function(require, exports, module) {
 			nextKeyword = findKeyword(sql, curPos);
 			if(nextKeyword.is('on')) {
 				var onKeyword = nextKeyword;
-				nextKeyword = findKeyword(sql, onKeyword.getEnd() + 1);
+				nextKeyword = findKeyword(sql, onKeyword.getEnd());
 				var endPos = findEndBracket(sql, start, nextKeyword.getStart());
 				if(endPos == -1) {
 					endPos = nextKeyword.getStart() - 1;
@@ -181,12 +178,12 @@ define(function(require, exports, module) {
 	 */
 	function parseQueryTable(sql, start) {
 		var query = parseQuery(sql, start);
-		var nextKeyword = findKeyword(sql, query.getEnd() + 1);
+		var nextKeyword = findKeyword(sql, query.getEnd());
 		if(!nextKeyword.is('union all')) {
-			var endPos = findEndBracket(sql, query.getEnd() + 1, nextKeyword.getStart());
+			var endPos = findEndBracket(sql, query.getEnd(), nextKeyword.getStart());
 			var nextEndPos = findEndBracket(sql, endPos + 1, nextKeyword.getStart());
 			if(nextEndPos == -1 || nextEndPos > nextKeyword.getStart()) {
-				nextEndPos = nextKeyword.getStart();
+				nextEndPos = nextKeyword.getStart() - 1;
 			}
 			var alias = sql.substring(endPos + 1, nextEndPos).trim().split(/\s+/)[0];
 			var queryTable = model.createQueryTable()
@@ -199,7 +196,7 @@ define(function(require, exports, module) {
 		var unionKeyword = nextKeyword;
 		var table = model.createQueryTable()
 			.query(query).start(start).end(unionKeyword.getStart() - 1);
-		var unionTable = model.createUnionTable().addUnionTables(queryTable);
+		var unionTable = model.createUnionTable().addUnionTables(table);
 		while(nextKeyword.is('union all')) {
 			unionKeyword = nextKeyword;
 			query = parseQuery(sql, unionKeyword.getEnd() + 1);
@@ -209,8 +206,12 @@ define(function(require, exports, module) {
 			nextKeyword = findKeyword(sql, table.getEnd());
 		}
 		var endPos = findEndBracket(sql, unionTable.getLastTable().getEnd(), nextKeyword.getStart());
-		var alias = sql.substring(endPos + 1, nextKeyword.getStart()).trim();
-		return unionTable.alias(alias).start(start).end(nextKeyword.getStart() - 1);
+		var nextEndPos = findEndBracket(sql, endPos + 1, nextKeyword.getStart());
+		if(nextEndPos == -1 || nextEndPos > nextKeyword.getStart()) {
+			nextEndPos = nextKeyword.getStart() - 1;
+		}
+		var alias = sql.substring(endPos + 1, nextEndPos).trim();
+		return unionTable.alias(alias).start(start).end(nextEndPos);
 	}
 	
 	/**
@@ -232,6 +233,7 @@ define(function(require, exports, module) {
 		}
 		return model.createSimpleTable()
 			.table(tableName)
+			.alias(alias)
 			.start(start)
 			.end(end);
 	}
@@ -282,7 +284,10 @@ define(function(require, exports, module) {
 	}
 	
 	function findEndBracket(sql, start, end) {
-		!end && (end = sql.length);
+		//!end && (end = sql.length);
+		if(end === undefined) {
+			end = sql.length;
+		}
 		var cnt = 0;
 		for(var i = start; i < end; i++) {
 			var c = sql.charAt(i);

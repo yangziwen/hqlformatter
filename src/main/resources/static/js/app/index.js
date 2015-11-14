@@ -58,7 +58,9 @@ define(function(require, exports, module) {
 				common.alertMsg('请先输入sql!');
 				return;
 			}
-			var query = parser.parseSelectSql(sql);
+			var query = parser.parseSelectSql(sql + '    ');
+			console.log(query);
+			doFormatSql(sql);
 		});
 	}
 	
