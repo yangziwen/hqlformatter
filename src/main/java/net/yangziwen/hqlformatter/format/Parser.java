@@ -307,7 +307,7 @@ public class Parser {
 			end = nextEndPos;
 		}
 		String str = sql.substring(start, end).trim();
-		String[] arr = str.split("\\s");
+		String[] arr = str.split("\\s+");
 		String tableName = arr[0];
 		String alias = arr.length >= 2? arr[1]: "";
 		if (arr.length >= 3 && "as".equalsIgnoreCase(alias)) {

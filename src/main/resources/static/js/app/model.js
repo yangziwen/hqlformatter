@@ -221,6 +221,28 @@ define(function(require, exports, module) {
 		},
 		getComment: function() {
 			return this._comment || null;
+		},
+		is: function(keyword) {
+			if(_.isEmpty(keyword) || _.isEmpty(this.getName())) {
+				return false;
+			}
+			var names = this.getName().split(/\s+/),
+				keywords = keyword.trim().split(/\s+/);
+			if(names.length != keywords.length) {
+				return false;
+			}
+			for(var i = 0, l = names.length; i < l; i++) {
+				if(keywords[i].toLowerCase() !== names[i].toLowerCase()) {
+					return false;
+				}
+			}
+			return true;
+		},
+		contains: function(keyword) {
+			if(_.isEmpty(keyword) || _.isEmpty(this.getName())) {
+				return false;
+			}
+			return this.getName().toLowerCase().indexOf(keyword.toLowerCase()) >= 0;
 		}
 	});
 	

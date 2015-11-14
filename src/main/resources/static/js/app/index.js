@@ -3,7 +3,8 @@ define(function(require, exports, module) {
 	"use strict";
 	
 	var common = require('app/common'),
-		$ = require('jquery');
+		$ = require('jquery'),
+		parser = require('app/parser');
 	
 	var editor = null;
 	
@@ -57,7 +58,7 @@ define(function(require, exports, module) {
 				common.alertMsg('请先输入sql!');
 				return;
 			}
-			doFormatSql(sql);
+			var query = parser.parseSelectSql(sql);
 		});
 	}
 	
