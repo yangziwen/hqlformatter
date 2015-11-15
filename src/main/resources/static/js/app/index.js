@@ -58,8 +58,13 @@ define(function(require, exports, module) {
 				common.alertMsg('请先输入sql!');
 				return;
 			}
-			var query = parser.parseSelectSql(sql + '    ');
-			editor.setValue(query.format('    ', 0, []).join('').replace(/^\s*$\n/gm, ''));
+			try {
+				var query = parser.parseSelectSql(sql + '    ');
+				editor.setValue(query.format('    ', 0, []).join('').replace(/^\s*$\n/gm, ''));
+			} catch (e) {
+				common.alertMsg('格式化失败，请检查sql语法!');
+				console.error(e);
+			}
 //			doFormatSql(sql);
 		});
 	}

@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <title>HiveQL格式化工具</title>
-<link rel="stylesheet" href="/css/bootstrap.min.css"/>
-<link rel="stylesheet" href="/css/style.css"/>
-<link rel="stylesheet" href="/css/codemirror.css" >
-<link rel="stylesheet" href="/css/simplescrollbars.css" >
-<link rel="shortcut icon" href="/img/favicon.ico"/>
+<link rel="stylesheet" href="css/bootstrap.min.css"/>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="stylesheet" href="css/codemirror.css" >
+<link rel="stylesheet" href="css/simplescrollbars.css" >
+<link rel="shortcut icon" href="img/favicon.ico"/>
 <style>
 .CodeMirror {
 	height: 425px;
@@ -62,14 +62,14 @@ div.CodeMirror span.CodeMirror-matchingbracket{
 	</div><!-- /row1 -->
 </div>
 
-<script src="/js/sea-modules/sea.js"></script>
-<script type="text/javascript" src="/js/codemirror/codemirror.js"></script>
-<script type="text/javascript" src="/js/codemirror/simplescrollbars.js"></script>
-<script type="text/javascript" src="/js/codemirror/matchbrackets.js"></script>
-<script type="text/javascript" src="/js/codemirror/mysql.js"></script>
+<script src="js/sea-modules/sea.js"></script>
+<script type="text/javascript" src="js/codemirror/codemirror.js"></script>
+<script type="text/javascript" src="js/codemirror/simplescrollbars.js"></script>
+<script type="text/javascript" src="js/codemirror/matchbrackets.js"></script>
+<script type="text/javascript" src="js/codemirror/mysql.js"></script>
 <script>
 seajs.config({
-	base: '/js/',
+	base: './js/',
 	alias: {
 		'jquery': 'jquery/jquery.js',
 		'bootstrap': 'bootstrap/bootstrap.min.js',
@@ -79,9 +79,6 @@ seajs.config({
 seajs.use('app/index', function(index){
 	index.init();
 });
-seajs.use('app/test', function(test){
-	test.run();
-})
 </script>
 </body>
 </html>

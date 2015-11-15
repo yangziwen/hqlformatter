@@ -40,6 +40,12 @@ define(function(require, exports, module) {
 		return parseQuery(sql, 0);
 	}
 	
+	function assert(expect, failedMsg) {
+		if(!expect) {
+			throw failedMsg;
+		}
+	}
+	
 	/**
 	 * 解析查询语句
 	 */
@@ -48,8 +54,8 @@ define(function(require, exports, module) {
 		var selectKeyword = findKeyword(sql, start),
 			fromKeyword = findKeyword(sql, selectKeyword.getEnd());
 		
-		console.assert(selectKeyword.is('select'), 'failed to find select keyword');
-		console.assert(fromKeyword.is('from'), 'failed to find from keyword');
+		assert(selectKeyword.is('select'), 'failed to find select keyword');
+		assert(fromKeyword.is('from'), 'failed to find from keyword');
 		
 		var tables = parseTables(sql, fromKeyword.getEnd());
 		
