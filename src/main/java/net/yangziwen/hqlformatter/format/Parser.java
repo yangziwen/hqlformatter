@@ -291,7 +291,7 @@ public class Parser {
 			unionTable.addUnionKeyword(unionKeyword).addUnionTable(table);
 			nextKeyword = findKeyWord(sql, table.end());
 		}
-		int endPos = findEndBracket(sql, unionTable.lastTable().end(), nextKeyword.start());
+		int endPos = findEndBracket(sql, unionTable.lastTable().end(), nextKeyword.start());	// TODO nextEndPos
 		String alias = sql.substring(endPos + 1, nextKeyword.start()).trim();
 		return unionTable.alias(alias).start(start).end(nextKeyword.start() - 1);
 	}

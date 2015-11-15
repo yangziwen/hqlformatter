@@ -59,8 +59,8 @@ define(function(require, exports, module) {
 				return;
 			}
 			var query = parser.parseSelectSql(sql + '    ');
-			console.log(query);
-			doFormatSql(sql);
+			editor.setValue(query.format('    ', 0, []).join('').replace(/^\s*$\n/gm, ''));
+//			doFormatSql(sql);
 		});
 	}
 	

@@ -4,6 +4,13 @@ define(function(require, exports, module) {
 	
 	var _ = require('underscore');
 	
+	var commentPrefixRe = /\s*?--(?!\d+\})/;
+	
+	function repeat(str, repeat) {
+		repeat || (repeat = 0);
+		return new Array(repeat + 1).join(str);
+	}
+	
 	function extendClass(superClass, proto) {
 		var superInstance = _.isFunction(superClass)? new superClass(): superClass;
 		return _.extend(
@@ -85,6 +92,16 @@ define(function(require, exports, module) {
 		},
 		toString: function() {
 			return this.getTable() + (_.isEmpty(this.getAlias())? '': ' ' + this.getAlias());
+		},
+		format: function(indent, nestedDepth, buffer) {
+			buffer.push(this.getTable());
+			if(!_.isEmpty(this.getAlias())) {
+				buffer.push(" ", this.getAlias());
+			}
+			if(this.getHeadComment()) {
+				buffer.push("  ", this.getHeadComment().getContent());
+			}
+			return buffer;
 		}
 	});
 	
@@ -114,6 +131,20 @@ define(function(require, exports, module) {
 		},
 		getJoinOns: function() {
 			return this.ensureArray('_joinOns');
+		},
+		format: function(indent, nestedDepth, buffer) {
+			var baseIndent = repeat(indent, nestedDepth - 1);
+			buffer.push('\n', baseIndent, this.getJoinKeyword().getName(), ' ');
+			this.getBaseTable().format(indent, nestedDepth, buffer);
+			
+			var joinOns = this.getJoinOns();
+			if(!_.isEmpty(joinOns)) {
+				buffer.push('\n', baseIndent, 'ON ', joinOns[0]);
+				for(var i = 1, l = joinOns.length; i < l; i++) {
+					buffer.push('AND ', joinOns[i]);
+				}
+			}
+			return buffer;
 		}
 	});
 	
@@ -151,6 +182,29 @@ define(function(require, exports, module) {
 				return null;
 			}
 			return this.getFirstTable().getHeadComment();
+		},
+		format: function(indent, nestedDepth, buffer) {
+			var baseIndent = repeat(indent, nestedDepth);
+			var unionTables = this.getUnionTables();
+			var unionKeywords = this.getUnionKeywords();
+			
+			unionTables[0].format(indent, nestedDepth, buffer, false, true);
+			
+			var size = unionTables.length;
+			
+			for(var i = 1; i < size; i++) {
+				buffer.push('\n', baseIndent, 'UNION ALL');
+				
+				var comment = unionKeywords[i-1].getComment();
+				if(comment != null) {
+					buffer.push('  ', comment.getContent());
+				}
+				
+				buffer.push('\n', baseIndent);
+				
+				unionTables[i].format(indent, nestedDepth, buffer, true, i < size - 1);
+			}
+			buffer.push(' ', this.getAlias(), '\n');
 		}
 	});
 	
@@ -169,6 +223,27 @@ define(function(require, exports, module) {
 		getTable: function() {
 			var queryStr = this._query? this._query.toString(): null;
 			return 'QueryTable[' + queryStr + ']'
+		},
+		format: function(indent, nestedDepth, buffer, omitBeginBracket, omitEndBracket) {
+			if(!omitBeginBracket) {
+				buffer.push('(');
+			}
+			if(this.getHeadComment() != null) {
+				buffer.push("  ", this.getHeadComment().getContent());
+			}
+			buffer.push('\n', repeat(indent, nestedDepth));
+			this.getQuery().format(indent, nestedDepth, buffer);
+			buffer.push('\n', repeat(indent, nestedDepth - 1));
+			if(!omitEndBracket) {
+				buffer.push(')');
+			}
+			if(!_.isEmpty(this.getAlias())) {
+				buffer.push(' ', this.getAlias());
+			}
+			if(this.getTailComment() != null) {
+				buffer.push('  ', this.getTailComment().getContent());
+			}
+			return buffer;
 		}
 	});
 	
@@ -204,6 +279,68 @@ define(function(require, exports, module) {
 		},
 		getGroupBys: function() {
 			return this.ensureArray('_groupBys');
+		},
+		_formatSelect: function(indent, nestedDepth, buffer) {
+			var selects = this.getSelects();
+			var sep = chooseSeparator(selects, indent, nestedDepth + 1);
+			buffer.push('SELECT ', selects[0]);
+			for(var i = 1, l = selects.length; i < l; i++) {
+				buffer.push(',');
+				var clause = selects[i].trim();
+				if(commentPrefixRe.test(clause)) {
+					var strs = clause.split(/(\r\n)|\r|\n/);
+					if(strs.length > 1) {
+						buffer.push('  ', strs.shift())
+						clause = strs.join('\n').trim();
+					}
+				}
+				buffer.push(sep, clause);
+			}
+			return this;
+		},
+		_formatFrom: function(indent, nestedDepth, buffer) {
+			var tables = this.getTables();
+			buffer.push('\n', repeat(indent, nestedDepth), 'FROM ');
+			tables[0].format(indent, nestedDepth + 1, buffer);
+			for(var i = 1, l = tables.length; i < l; i++) {
+				tables[i].format(indent, nestedDepth + 1, buffer);
+			} 
+			return this;
+		},
+		_formatWhere: function(indent, nestedDepth, buffer) {
+			var wheres = this.getWheres();
+			if(_.isEmpty(wheres)) {
+				return this;
+			}
+			var sep = chooseSeparator(wheres, indent, nestedDepth + 1);
+			buffer.push('\n', repeat(indent, nestedDepth), 'WHERE ', wheres[0]);
+			for(var i = 1, l = wheres.length; i < l; i++) {
+				// 支持where语句中进行单行注释，如下
+				// -- AND t.manager_type = 'XXX'
+				if(!wheres[i-1].endsWith('--')) {
+					buffer.push(sep);
+				} else {
+					buffer.push(' ');
+				}
+				buffer.push('AND ', wheres[i]);
+			}
+			return this;
+		},
+		_formatGroupBy: function(indent, nestedDepth, buffer) {
+			var groupBys = this.getGroupBys();
+			if(_.isEmpty(groupBys)) {
+				return this;
+			}
+			buffer.push('\n', repeat(indent, nestedDepth), 'GROUP BY ', groupBys.join(', '));
+			return this;
+		},
+		format: function(indent, nestedDepth, buffer) {
+			this._formatSelect(indent, nestedDepth, buffer)
+				._formatFrom(indent, nestedDepth, buffer)
+				._formatWhere(indent, nestedDepth, buffer)
+				._formatGroupBy(indent, nestedDepth, buffer)
+			;
+			return buffer;
 		}
 	});
 	
@@ -255,6 +392,24 @@ define(function(require, exports, module) {
 			return this._content || '';
 		}
 	});
+	
+	function chooseSeparator(list, indent, nestedDepth) {
+		var sep = '\n' + repeat(indent, nestedDepth);
+		if(list.length > 5) {
+			return sep;
+		}
+		var totalLen = 0;
+		for(var i = 0, l = list.length; i < l; i++) {
+			if(commentPrefixRe.test(list[i])) {
+				return sep;
+			}
+			totalLen += list[i].length;
+		}
+		if(totalLen < 80) {
+			return ' ';
+		}
+		return sep;
+	}
 	
 	module.exports = {
 		createKeyword: function() {

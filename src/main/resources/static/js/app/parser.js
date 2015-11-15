@@ -35,6 +35,8 @@ define(function(require, exports, module) {
 	var aresEscapeRe = /(HOUR|DATE|MONTH|YEAR)\s*?--\s*?\d+?\s*?\}/i;
 	
 	function parseSelectSql(sql) {
+		sql = sql.replace(/\/\*[\w\W]*?\*\//, '');	// 清除多行注释
+		sql = sql.replace(/\t/g, '    ');			// tab替换为4个空格
 		return parseQuery(sql, 0);
 	}
 	
