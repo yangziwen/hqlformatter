@@ -32,7 +32,7 @@ define(function(require, exports, module) {
 		).constructor;
 	}
 	
-	var Base = extendClass({
+	var Base = extendClass(Object, {
 		start(start) {
 			this._start = start;
 			return this;

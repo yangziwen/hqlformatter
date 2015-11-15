@@ -292,8 +292,12 @@ public class Parser {
 			nextKeyword = findKeyWord(sql, table.end());
 		}
 		int endPos = findEndBracket(sql, unionTable.lastTable().end(), nextKeyword.start());	// TODO nextEndPos
-		String alias = sql.substring(endPos + 1, nextKeyword.start()).trim();
-		return unionTable.alias(alias).start(start).end(nextKeyword.start() - 1);
+		int nextEndPos = findEndBracket(sql, endPos + 1, nextKeyword.start());
+		if(nextEndPos == -1 || nextEndPos > nextKeyword.start()) {
+			nextEndPos = nextKeyword.start() - 1;
+		}
+		String alias = sql.substring(endPos + 1, nextEndPos).trim();
+		return unionTable.alias(alias).start(start).end(nextEndPos);
 	}
 	
 	/**
