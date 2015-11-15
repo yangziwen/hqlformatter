@@ -46,6 +46,9 @@ define(function(require, exports, module) {
 		var selectKeyword = findKeyword(sql, start),
 			fromKeyword = findKeyword(sql, selectKeyword.getEnd());
 		
+		console.assert(selectKeyword.is('select'), 'failed to find select keyword');
+		console.assert(fromKeyword.is('from'), 'failed to find from keyword');
+		
 		var tables = parseTables(sql, fromKeyword.getEnd());
 		
 		tables[0].headComment(fromKeyword.getComment());
@@ -90,7 +93,7 @@ define(function(require, exports, module) {
 			.addWheres(wheres)
 			.addGroupBys(groupBys)
 			.start(selectKeyword.getStart())
-			.end(endPos - 1)
+			.end(endPos)
 		;
 	}
 	
@@ -101,9 +104,12 @@ define(function(require, exports, module) {
 		var tables = [];
 		var table = parseTable(sql, start);
 		tables.push(table);
-		var nextKeyword = findKeyword(sql, table.getEnd() + 1);
+		var nextKeyword = findKeyword(sql, table.getEnd());
+		if(findEndBracket(sql, table.getEnd(), nextKeyword.getStart()) > 0) {
+			return tables;
+		}
 		while(nextKeyword.contains('join')) {
-			table = parseJoinTable(sql, table.getEnd() + 1);
+			table = parseJoinTable(sql, table.getEnd());
 			if(table != null) {
 				tables.push(table);
 			}
@@ -158,6 +164,7 @@ define(function(require, exports, module) {
 				.baseTable(table.headComment(joinKeyword.getComment()))
 				.joinKeyword(joinKeyword);
 			nextKeyword = findKeyword(sql, curPos);
+			// TODO
 			if(nextKeyword.is('on')) {
 				var onKeyword = nextKeyword;
 				nextKeyword = findKeyword(sql, onKeyword.getEnd());
@@ -199,7 +206,7 @@ define(function(require, exports, module) {
 		var unionTable = model.createUnionTable().addUnionTables(table);
 		while(nextKeyword.is('union all')) {
 			unionKeyword = nextKeyword;
-			query = parseQuery(sql, unionKeyword.getEnd() + 1);
+			query = parseQuery(sql, unionKeyword.getEnd());
 			table = model.createQueryTable().query(query)
 				.start(unionKeyword.getEnd() + 1).end(query.getEnd());
 			unionTable.addUnionKeywords(unionKeyword).addUnionTables(table);
