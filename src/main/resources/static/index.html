@@ -76,8 +76,11 @@ seajs.config({
 		'underscore': 'underscore/underscore.js'
 	}
 });
-seajs.use('app/index', function(index){
+seajs.use('app/index', function(index) {
 	index.init();
+});
+seajs.use('app/test', function(test) {
+	test.run();
 });
 </script>
 </body>

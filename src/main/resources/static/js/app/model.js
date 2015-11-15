@@ -18,15 +18,14 @@ define(function(require, exports, module) {
 			superInstance, proto, 
 			{
 				superInstance: superInstance,
-				superMethod: function(methodName) {
+				invokeSuperMethod: function(methodName) {
 					var method = superInstance[methodName];
-					if(!_.isFunction[method]) {
+					if(!_.isFunction(method)) {
 						return null;
 					}
-					var args = [].concat(arguments);
+					var args = _.toArray(arguments);
 					args.shift();
-					args.unshift(this);
-					return method.apply(args);
+					return method.apply(this, args);
 				}
 			}
 		).constructor;
@@ -432,7 +431,8 @@ define(function(require, exports, module) {
 		},
 		createUnionTable: function() {
 			return new UnionTable();
-		}
+		},
+		_extendClass: extendClass
 	};
 	
 });

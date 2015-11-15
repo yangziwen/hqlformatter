@@ -111,6 +111,29 @@ define(function(require, exports, module) {
 		}}
 	}
 	
+	function textExtendClass(){
+		var assertFailed = getFailedAssertion('Assertion of extendClass {} failed');
+		var Parent = model._extendClass(Object, {
+			test: function(param) {
+				return 'test parent ' + param;
+			}
+		});
+		var Child = model._extendClass(Parent, {
+			test: function(param) {
+				return 'test child ' + param;
+			},
+			testParent: function(param) {
+				return this.invokeSuperMethod('test', param);
+			}
+		});
+		var p = new Parent(), c = new Child();
+		with(console){
+			assert(p.test('p') === 'test parent p', assertFailed('parent'));
+			assert(c.test('c') === 'test child c', assertFailed('child'));
+			assert(c.testParent('pc') === 'test parent pc', assertFailed('invokeSuperMethod'));
+		}
+	}
+	
 	function getFailedAssertion(msg) {
 		return function(field) {
 			return msg.replace(/\{\}/, field);
@@ -126,6 +149,7 @@ define(function(require, exports, module) {
 			testQueryTable();
 			testJoinTable();
 			testUnionTable();
+			textExtendClass();
 		}
 	};
 	
