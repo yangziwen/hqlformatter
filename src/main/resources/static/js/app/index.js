@@ -3,7 +3,8 @@ define(function(require, exports, module) {
 	"use strict";
 	
 	var common = require('app/common'),
-		$ = require('jquery');
+		$ = require('jquery'),
+		parser = require('app/parser');
 	
 	var editor = null;
 	
@@ -57,7 +58,14 @@ define(function(require, exports, module) {
 				common.alertMsg('请先输入sql!');
 				return;
 			}
-			doFormatSql(sql);
+			try {
+				var query = parser.parseSelectSql(sql + '    ');
+				editor.setValue(query.format('    ', 0, []).join('').replace(/^\s*$\n/gm, ''));
+			} catch (e) {
+				common.alertMsg('格式化失败，请检查sql语法!');
+				console.error(e);
+			}
+//			doFormatSql(sql);
 		});
 	}
 	
