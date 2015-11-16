@@ -60,7 +60,8 @@ define(function(require, exports, module) {
 			}
 			try {
 				var query = parser.parseSelectSql(sql + '    ');
-				editor.setValue(query.format('    ', 0, []).join('').replace(/^\s*$\n/gm, ''));
+				var headContent = sql.substring(0, query.getSelectKeyword().getStart());
+				editor.setValue(headContent + query.format('    ', 0, []).join('').replace(/^\s*$\n/gm, ''));
 			} catch (e) {
 				common.alertMsg('格式化失败，请检查sql语法!');
 				console.error(e);

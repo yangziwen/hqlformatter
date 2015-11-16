@@ -54,9 +54,6 @@ define(function(require, exports, module) {
 		var selectKeyword = findKeyword(sql, start),
 			fromKeyword = findKeyword(sql, selectKeyword.getEnd());
 		
-		assert(selectKeyword.is('select'), 'failed to find select keyword');
-		assert(fromKeyword.is('from'), 'failed to find from keyword');
-		
 		var tables = parseTables(sql, fromKeyword.getEnd());
 		
 		tables[0].headComment(fromKeyword.getComment());
@@ -96,6 +93,10 @@ define(function(require, exports, module) {
 		}
 		
 		return model.createQuery()
+			.selectKeyword(selectKeyword)
+			.fromKeyword(fromKeyword)
+			.whereKeyword(whereKeyword)
+			.groupByKeyword(groupByKeyword)
 			.addSelects(selects)
 			.addTables(tables)
 			.addWheres(wheres)

@@ -247,6 +247,40 @@ define(function(require, exports, module) {
 	});
 	
 	var Query = extendClass(Base, {
+		selectKeyword: function(keyword) {
+			assert(keyword.is('select'), 'keyword[' + keyword.toString() + '] is not "select"');
+			this._selectKeyword = keyword;
+			return this;
+		},
+		getSelectKeyword: function() {
+			return this._selectKeyword || null;
+		},
+		fromKeyword: function(keyword) {
+			assert(keyword.is('from'), 'keyword[' + keyword.toString() + '] is not "from"');
+			this._fromKeyword = keyword;
+			return this;
+		},
+		getFromKeyword: function() {
+			return this._fromKeyword || null;
+		},
+		whereKeyword: function(keyword) {
+			if(!keyword) {return this;}
+			assert(keyword.is('where'), 'keyword[' + keyword.toString() + '] is not "where"');
+			this._whereKeyword = keyword;
+			return this;
+		},
+		getWhereKeyword: function() {
+			return this._whereKeyword || null;
+		},
+		groupByKeyword: function(keyword) {
+			if(!keyword) {return this;}
+			assert(keyword.is('group by'), 'keyword[' + keyword.toString() + '] is not "group by"');
+			this._groupByKeyword = keyword;
+			return this;
+		},
+		getGroupByKeyword: function() {
+			return this._groupByKeyword || null;
+		},
 		addSelects: function(list) {
 			!_.isArray(list) && (list = _.toArray(arguments));
 			this._selects = this.ensureArray('_selects').concat(list);
@@ -379,6 +413,9 @@ define(function(require, exports, module) {
 				return false;
 			}
 			return this.getName().toLowerCase().indexOf(keyword.toLowerCase()) >= 0;
+		},
+		toString: function() {
+			return [this.getName(), '{', this.getStart(), ', ', this.getEnd(), '}'].join('');
 		}
 	});
 	
@@ -408,6 +445,12 @@ define(function(require, exports, module) {
 			return ' ';
 		}
 		return sep;
+	}
+	
+	function assert(expect, failedMsg) {
+		if(!expect) {
+			throw failedMsg;
+		}
 	}
 	
 	module.exports = {
