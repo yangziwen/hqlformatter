@@ -27,6 +27,57 @@
 		</dependency>
 	</dependencies>
 	
+	<profiles>
+		<profile>
+			<id>exclude-static</id>
+			<build>
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+						<excludes>
+							<exclude>**/*.js</exclude>
+							<exclude>**/*.css</exclude>
+							<exclude>**/hive.png</exclude>
+							<exclude>**/fonts/*.*</exclude>
+						</excludes>
+					</resource>
+				</resources>
+			</build>
+		</profile>
+		<profile>
+			<id>compress-static</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>net.alchim31.maven</groupId>
+						<artifactId>yuicompressor-maven-plugin</artifactId>
+						<version>1.4.0</version>
+						<executions>
+							<execution>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>compress</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<encoding>UTF-8</encoding>
+							<jswarn>false</jswarn>
+							<nosuffix>true</nosuffix>
+							<linebreakpos>-1</linebreakpos>
+							<includes>
+								<include>**/*.js</include>
+								<include>**/*.css</include>
+							</includes>
+							<nomunge>true</nomunge>
+							<failOnWarning>false</failOnWarning>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+	
 	<build>
 		<finalName>hqlformatter</finalName>
 		<plugins>
@@ -68,6 +119,15 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>  
+                <artifactId>maven-jar-plugin</artifactId>  
+                <version>2.4</version>  
+                <configuration>
+                	<excludes>
+                		<exclude>**/*.js,**/*.css</exclude>
+                	</excludes>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 </project>

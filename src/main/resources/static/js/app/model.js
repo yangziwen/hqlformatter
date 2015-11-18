@@ -32,18 +32,18 @@ define(function(require, exports, module) {
 	}
 	
 	var Base = extendClass(Object, {
-		start(start) {
+		start: function(start) {
 			this._start = start;
 			return this;
 		},
-		getStart() {
+		getStart: function() {
 			return this._start || 0;
 		},
-		end(end) {
+		end: function(end) {
 			this._end = end;
 			return this;
 		},
-		getEnd() {
+		getEnd: function() {
 			return this._end || 0;
 		},
 		ensureArray: function(attr) {
@@ -58,25 +58,25 @@ define(function(require, exports, module) {
 	});
 	
 	var AbstractTable = extendClass(Base, {
-		alias(alias) {
+		alias: function(alias) {
 			this._alias = alias;
 			return this;
 		},
-		getAlias() {
+		getAlias: function() {
 			return this._alias || '';
 		},
-		headComment(comment) {
+		headComment: function(comment) {
 			this._headComment = comment;
 			return this;
 		},
-		getHeadComment() {
+		getHeadComment: function() {
 			return this._headComment || null;
 		},
-		tailComment(comment) {
+		tailComment: function(comment) {
 			this._tailComment = comment;
 			return this;
 		},
-		getTailComment() {
+		getTailComment: function() {
 			return this._tailComment || null;
 		}
 	});

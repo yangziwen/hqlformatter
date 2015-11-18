@@ -5,7 +5,7 @@
 	</formats>
 	<fileSets>
         <fileSet>
-            <directory>src/main/resources/static</directory>
+            <directory>target/classes/static</directory>
             <outputDirectory>/</outputDirectory>
         </fileSet>
 	</fileSets>
