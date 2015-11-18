@@ -46,7 +46,10 @@
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
 					<appendAssemblyId>false</appendAssemblyId>
-					<descriptorRefs>
+					<descriptors><!-- 目前格式化hiveql只需要前端代码，此处将前端文件单独打包 -->
+						<descriptor>assembly-static.xml</descriptor>
+					</descriptors>
+					<descriptorRefs><!-- 后端代码仅用于验证算法 -->
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
 					<archive>
