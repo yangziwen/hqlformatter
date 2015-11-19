@@ -16,11 +16,15 @@ define(function(require, exports, module) {
 		
 		editor = CodeMirror.fromTextArea($('#J_sql')[0], {
 			mode: 'text/x-mysql',
-			tabMode: 'indent',
 			scrollbarStyle: 'simple',
 			matchBrackets: true,
 			lineNumbers: true,
-			indentUnit: 4
+			indentUnit: 4,
+			extraKeys: {
+				Tab: function(cm) {
+					cm.replaceSelection('    ');
+				}
+			}
 		});
 	}
 	
