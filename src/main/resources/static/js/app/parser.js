@@ -20,17 +20,16 @@ define(function(require, exports, module) {
 		"group by"
 	];
 	
-	var keywordRe = (function() {
-		return new RegExp(
-			'(?:^|[^_\\-0-9a-zA-Z\u4e00-\u9fa5])('
-			+
-			_.map(keywords, function(v){
-				return v.replace(/\s/g, '\\s+?')
-			}).join('|')
-			+
-			')(?=[^_0-9a-zA-Z\u4e00-\u9fa5])','gi'
-		)
-	})();
+	var keywordRe = new RegExp(
+		'(?:^|[^_\\-0-9a-zA-Z\u4e00-\u9fa5])('
+		+
+		_.map(keywords, function(v){
+			return v.replace(/\s/g, '\\s+?')
+		}).join('|')
+		+
+		')(?=[^_0-9a-zA-Z\u4e00-\u9fa5])',
+		'gi'
+	);
 	
 	var aresEscapeRe = /(HOUR|DATE|MONTH|YEAR)\s*?--\s*?\d+?\s*?\}/i;
 	
