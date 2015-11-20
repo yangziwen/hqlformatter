@@ -34,7 +34,9 @@ define(function(require, exports, module) {
 			minCmHeight = 425;
 		var $wrapper = $('#J_sql').parent();
 		var cmHeight = $(window).height() - defaultWinHeight + minCmHeight;
-		if(cmHeight > minCmHeight) {
+		cmHeight = Math.max(cmHeight, minCmHeight);
+		if(cmHeight != $wrapper.height()) {
+			console.log(cmHeight);
 			$('style').filter(function(i, v) {
 				return /^\.CodeMirror\{height:\d+px;\}$/.test($(v).html())
 			}).remove();
