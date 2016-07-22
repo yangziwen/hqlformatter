@@ -5,8 +5,8 @@
 <title>HiveQL格式化工具</title>
 <link rel="stylesheet" href="css/bootstrap.min.css"/>
 <link rel="stylesheet" href="css/style.css"/>
-<link rel="stylesheet" href="css/codemirror.css" >
-<link rel="stylesheet" href="css/simplescrollbars.css" >
+<link rel="stylesheet" href="css/codemirror.css" />
+<link rel="stylesheet" href="css/simplescrollbars.css" />
 <link rel="shortcut icon" href="img/favicon.ico"/>
 <style>
 @media (min-width:1400px){
@@ -66,7 +66,10 @@ div.CodeMirror span.CodeMirror-matchingbracket{
 				<textarea id="J_sql"></textarea>
 			</div>
 			<br/>
-			<div class="text-center">
+			<div class="text-center form-inline">
+				<input type="text" class="form-control" id="J_date" placeholder="请输入日期：yyyyMMdd" />
+				<button class="btn btn-info" id="J_replaceBtn">替换日期</button>
+				&nbsp;
 				<button class="btn btn-primary" id="J_formatBtn">格式化</button>
 				&nbsp;
 				<button class="btn btn-primary" id="J_clearBtn">&nbsp;清&nbsp;&nbsp;空&nbsp;</button>

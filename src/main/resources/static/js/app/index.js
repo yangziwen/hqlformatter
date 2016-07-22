@@ -48,6 +48,40 @@ define(function(require, exports, module) {
 		}
 	}
 	
+	function initReplaceBtn() {
+		var replaced = false;
+		var backup = '';
+		$('#J_replaceBtn').on('click', function() {
+			if (replaced) {
+				editor.setValue(backup);
+				replaced = false;
+			} else {
+				var date = $('#J_date').val();
+				if (!/^\d{8}$/.test(date)) {
+					common.alertMsg('请正确输入要替换的日期!');
+					return;
+				}
+				backup = editor.getValue();
+				var content = backup
+				.replace(/\{[Yy][Ee][Aa][Rr]}/g, date.substr(0, 4))
+				.replace(/\{[Mm][Oo][Nn][Tt][Hh]}/g, date.substr(4, 2))
+				.replace(/\{[Dd][Aa][Tt][Ee]}/g, date);
+				editor.setValue(content);
+				replaced = true;
+			}
+			if (replaced) {
+				$(this).text('还原日期')
+					.removeClass('btn-info')
+					.addClass('btn-warning');
+			} else {
+				$(this).text('替换日期')
+					.removeClass('btn-warning')
+					.addClass('btn-info');
+			}
+		});
+		
+	}
+	
 	function initClearBtn() {
 		$('#J_clearBtn').on('click', function() {
 			if(editor) {
@@ -101,6 +135,7 @@ define(function(require, exports, module) {
 	
 	function init() {
 		initEditor();
+		initReplaceBtn();
 		initClearBtn();
 		initFormatBtn();
 	}
