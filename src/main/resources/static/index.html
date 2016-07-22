@@ -32,6 +32,9 @@
 .cm-s-default .cm-comment {
 	color: rgb(27,129,62);
 }
+.cm-matchhighlight {
+	background-color: rgb(203, 240, 255)
+}
 div.CodeMirror span.CodeMirror-matchingbracket{
 	font-weight: bold;
 }
@@ -74,8 +77,11 @@ div.CodeMirror span.CodeMirror-matchingbracket{
 
 <script src="js/sea-modules/sea.js"></script>
 <script type="text/javascript" src="js/codemirror/codemirror.js"></script>
+<script type="text/javascript" src="js/codemirror/annotatescrollbar.js"></script>
+<script type="text/javascript" src="js/codemirror/matchesonscrollbar.js"></script>
 <script type="text/javascript" src="js/codemirror/simplescrollbars.js"></script>
 <script type="text/javascript" src="js/codemirror/matchbrackets.js"></script>
+<script type="text/javascript" src="js/codemirror/match-highlighter.js"></script>
 <script type="text/javascript" src="js/codemirror/mysql.js"></script>
 <script>
 seajs.config({

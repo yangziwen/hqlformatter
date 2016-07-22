@@ -18,6 +18,9 @@ define(function(require, exports, module) {
 			mode: 'text/x-mysql',
 			scrollbarStyle: 'simple',
 			matchBrackets: true,
+			highlightSelectionMatches: {
+				annotateScrollbar: true
+			},
 			lineNumbers: true,
 			indentUnit: 4,
 			extraKeys: {
