@@ -64,9 +64,9 @@ define(function(require, exports, module) {
 				}
 				backup = editor.getValue();
 				var content = backup
-				.replace(/\{[Yy][Ee][Aa][Rr]}/g, date.substr(0, 4))
-				.replace(/\{[Mm][Oo][Nn][Tt][Hh]}/g, date.substr(4, 2))
-				.replace(/\{[Dd][Aa][Tt][Ee]}/g, date);
+				.replace(/\{YEAR}/gi, date.substr(0, 4))
+				.replace(/\{MONTH}/gi, date.substr(4, 2))
+				.replace(/\{DATE}/gi, date);
 				editor.setValue(content);
 				replaced = true;
 			}
