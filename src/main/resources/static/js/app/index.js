@@ -29,6 +29,7 @@ define(function(require, exports, module) {
 				}
 			}
 		});
+		
 	}
 	
 	function resizeCodeMirror() {
@@ -58,7 +59,7 @@ define(function(require, exports, module) {
 			} else {
 				var date = $('#J_date').val();
 				if (!/^\d{8}$/.test(date)) {
-					common.alertMsg('请正确输入要替换的日期!');
+					common.alertMsg('请正确输入日期!');
 					return;
 				}
 				backup = editor.getValue();
@@ -73,13 +74,24 @@ define(function(require, exports, module) {
 				$(this).text('还原日期')
 					.removeClass('btn-info')
 					.addClass('btn-warning');
+				makeTextEditable(false);
 			} else {
 				$(this).text('替换日期')
 					.removeClass('btn-warning')
 					.addClass('btn-info');
+				makeTextEditable(true);
 			}
 		});
-		
+	}
+	
+	function makeTextEditable(editable) {
+		editor.markText({
+			line: 0, ch: 0
+		}, {
+			line: editor.lineCount() + 1, ch: 0
+		}, {
+			readOnly: !editable
+		});
 	}
 	
 	function initClearBtn() {
