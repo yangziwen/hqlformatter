@@ -34,7 +34,7 @@ define(function(require, exports, module) {
 	
 	function resizeCodeMirror() {
 		//-- 让CodeMirror对屏幕的高度自适应 --//
-		var defaultWinHeight = 700,
+		var defaultWinHeight = 610,
 			minCmHeight = 425;
 		var $wrapper = $('#J_sql').parent();
 		var cmHeight = $(window).height() - defaultWinHeight + minCmHeight;

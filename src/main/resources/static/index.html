@@ -41,6 +41,9 @@
 div.CodeMirror span.CodeMirror-matchingbracket{
 	font-weight: bold;
 }
+span.cm-cm-overlay.cm-matchhighlight {
+	display: inline-block;
+}
 #J_sql {
 	display: none;
 }
@@ -59,11 +62,11 @@ div.CodeMirror span.CodeMirror-matchingbracket{
 	</div>
 </nav>
 
-<div class="container" style="margin-bottom: 50px;">
+<div class="container" style="margin-bottom: 30px;">
 	<div class="row"><!-- row1 -->
 		<div class="col-xs-offset-1 col-xs-10">
 			<div class="text-center">
-				<h3 style="font-family: 'Microsoft Yahei'"><strong>请输入查询SQL</strong></h3>
+				<h3 style="font-family: 'Microsoft Yahei'; margin-top: 10px; font-size: 20px;"><strong>请输入查询SQL</strong></h3>
 			</div>
 			<div style="border: 2px solid #ccc; border-radius: 5px; height: 430px;" >
 				<textarea id="J_sql"></textarea>
