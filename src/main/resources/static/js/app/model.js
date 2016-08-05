@@ -138,9 +138,15 @@ define(function(require, exports, module) {
 			
 			var joinOns = this.getJoinOns();
 			if(!_.isEmpty(joinOns)) {
+				var sep = chooseSeparator(joinOns, indent, nestedDepth);
 				buffer.push('\n', baseIndent, 'ON ', joinOns[0]);
 				for(var i = 1, l = joinOns.length; i < l; i++) {
-					buffer.push(' AND ', joinOns[i]);
+					if (!joinOns[i-1].endsWith('--')) {
+						buffer.push(sep);
+					} else {
+						buffer.push(' ');
+					}
+					buffer.push('AND ', joinOns[i]);
 				}
 			}
 			return buffer;
@@ -319,7 +325,7 @@ define(function(require, exports, module) {
 			buffer.push('SELECT ', selects[0]);
 			for(var i = 1, l = selects.length; i < l; i++) {
 				buffer.push(',');
-				var clause = selects[i].trim();
+				var clause = selects[i].trim().replace(/\s*\n\s*/g, ' ');
 				if(commentPrefixRe.test(clause)) {
 					var strs = clause.split(/(\r\n)|\r|\n/);
 					if(strs.length > 1) {
@@ -364,7 +370,11 @@ define(function(require, exports, module) {
 			if(_.isEmpty(groupBys)) {
 				return this;
 			}
-			buffer.push('\n', repeat(indent, nestedDepth), 'GROUP BY ', groupBys.join(', '));
+			var sep = chooseSeparator(groupBys, indent, nestedDepth + 1);
+			buffer.push('\n', repeat(indent, nestedDepth), 'GROUP BY ', groupBys[0]);
+			for (var i = 1, l = groupBys.length; i < l; i++) {
+				buffer.push(',', sep, groupBys[i]);
+			}
 			return this;
 		},
 		format: function(indent, nestedDepth, buffer) {
