@@ -393,7 +393,7 @@ define(function(require, exports, module) {
 			return this;
 		},
 		getName: function() {
-			return this._name || '';
+			return (this._name || '').replace(/\s*\n\s*/g, ' ');
 		},
 		comment: function(comment) {
 			this._comment = comment;
