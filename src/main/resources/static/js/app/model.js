@@ -138,7 +138,7 @@ define(function(require, exports, module) {
 			
 			var joinOns = this.getJoinOns();
 			if(!_.isEmpty(joinOns)) {
-				var sep = chooseSeparator(joinOns, indent, nestedDepth);
+				var sep = chooseSeparator(joinOns, indent, nestedDepth, joinOns.length > 3);
 				buffer.push('\n', baseIndent, 'ON ', joinOns[0]);
 				for(var i = 1, l = joinOns.length; i < l; i++) {
 					if (!joinOns[i-1].endsWith('--')) {
@@ -370,7 +370,7 @@ define(function(require, exports, module) {
 			if(_.isEmpty(groupBys)) {
 				return this;
 			}
-			var sep = chooseSeparator(groupBys, indent, nestedDepth + 1);
+			var sep = chooseSeparator(groupBys, indent, nestedDepth + 1, groupBys.length > 3);
 			buffer.push('\n', repeat(indent, nestedDepth), 'GROUP BY ', groupBys[0]);
 			for (var i = 1, l = groupBys.length; i < l; i++) {
 				buffer.push(',', sep, groupBys[i]);
@@ -439,9 +439,14 @@ define(function(require, exports, module) {
 		}
 	});
 	
-	function chooseSeparator(list, indent, nestedDepth) {
+	function chooseSeparator(list, indent, nestedDepth, wrapLine) {
 		var sep = '\n' + repeat(indent, nestedDepth);
-		if(list.length > 5) {
+		if (wrapLine !== undefined) {
+			if (wrapLine === true) {
+				return sep;
+			}
+		}
+		else if (list.length > 5) {
 			return sep;
 		}
 		var totalLen = 0;
