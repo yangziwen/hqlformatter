@@ -5,5 +5,3 @@
 - 目前仅支持如下关键字  
 `select`，`from`，`where`，`group by`，`join`，`inner join`，`left outer join`，`full outer join`，`semi join`，`on`，`union all`  
 `from`和各种`join`支持嵌套各种子查询
-- 格式化效果如下  
-![demo](https://raw.githubusercontent.com/wiki/yangziwen/hqlformatter/resources/images/format_demo.jpg)
