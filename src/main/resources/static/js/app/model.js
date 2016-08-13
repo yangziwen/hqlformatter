@@ -133,7 +133,7 @@ define(function(require, exports, module) {
 		},
 		format: function(indent, nestedDepth, buffer) {
 			var baseIndent = repeat(indent, nestedDepth - 1);
-			buffer.push('\n', baseIndent, this.getJoinKeyword().getName(), ' ');
+			buffer.push('\n', baseIndent, this.getJoinKeyword().getName().toUpperCase(), ' ');
 			this.getBaseTable().format(indent, nestedDepth, buffer);
 			
 			var joinOns = this.getJoinOns();
