@@ -4,6 +4,7 @@ define(function(require, exports, module) {
 	
 	var common = require('app/common'),
 		$ = require('jquery'),
+		moment = require('moment'),
 		parser = require('app/parser');
 	
 	var editor = null;
@@ -57,16 +58,29 @@ define(function(require, exports, module) {
 				editor.setValue(backup);
 				replaced = false;
 			} else {
-				var date = $('#J_date').val();
-				if (!/^\d{8}$/.test(date)) {
+				var dateStr = $('#J_date').val();
+				if (!/^\d{8}$/.test(dateStr)) {
 					common.alertMsg('请正确输入日期!');
 					return;
 				}
+				var date = moment(dateStr, 'YYYYMMDD');
 				backup = editor.getValue();
 				var content = backup
-				.replace(/\{YEAR}/gi, date.substr(0, 4))
-				.replace(/\{MONTH}/gi, date.substr(4, 2))
-				.replace(/\{DATE}/gi, date);
+					.replace(/\{YEAR\s*?(\+|-)?\s*?(-?\d+)?\}/gi, function (content, oper, offset) {
+						!offset && (offset = 0);
+						var method = (oper == '-') ? 'subtract' : 'add';
+						return date.clone()[method](offset, 'y').format('YYYY');
+					})
+					.replace(/\{MONTH\s*?(\+|-)?\s*?(-?\d+)?\}/gi, function (content, oper, offset) {
+						!offset && (offset = 0);
+						var method = (oper == '-') ? 'subtract' : 'add';
+						return date.clone()[method](offset, 'M').format('MM');
+					})
+					.replace(/\{DATE\s*?(\+|-)?\s*?(-?\d+)?\}/gi, function (content, oper, offset) {
+						!offset && (offset = 0);
+						var method = (oper == '-') ? 'subtract' : 'add';
+						return date.clone()[method](offset, 'd').format('YYYYMMDD');
+					});
 				editor.setValue(content);
 				replaced = true;
 			}
