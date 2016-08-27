@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>HiveQL格式化工具</title>
+<title>珠玑助手</title>
 <link rel="stylesheet" href="css/bootstrap.min.css"/>
 <link rel="stylesheet" href="css/style.css"/>
 <link rel="stylesheet" href="css/codemirror.css" />
@@ -21,7 +21,7 @@
 }
 .CodeMirror {
 	height: 425px;
-	border-radius: 5px;
+	border-radius: 0px;
 }
 .cm-s-default .cm-keyword {
 	color: #113285;
@@ -38,6 +38,9 @@
 .CodeMirror-selection-highlight-scrollbar {
 	background-color: #0090cc;
 }
+.CodeMirror pre.CodeMirror-placeholder { 
+	color: #999; 
+}
 div.CodeMirror span.CodeMirror-matchingbracket{
 	font-weight: bold;
 }
@@ -47,6 +50,22 @@ span.cm-cm-overlay.cm-matchhighlight {
 #J_sql {
 	display: none;
 }
+.cursor-pointer {
+	cursor: pointer;
+}
+.nav-tabs {
+	border-bottom-width: 0px;
+}
+.nav-tabs>li {
+	margin-bottom: 0px;
+}
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+	border-radius: 0px;
+	border-top: 2px solid #2f82f5;
+}
+.nav-tabs>li>a {
+	border-radius: 0px;
+}
 </style>
 </head>
 <body>
@@ -55,7 +74,7 @@ span.cm-cm-overlay.cm-matchhighlight {
 		<div class="collapse navbar-collapse">
 			<div class="col-xs-offset-2 col-xs-8">
 				<ul class="nav navbar-left text-center" style="margin-top:6px; width: 100%;">
-					<li class="title"><strong>HiveQL格式化工具</strong></li>
+					<li class="title"><strong>珠玑助手</strong></li>
 				</ul>
 			</div>
 		</div>
@@ -64,21 +83,33 @@ span.cm-cm-overlay.cm-matchhighlight {
 
 <div class="container" style="margin-bottom: 30px;">
 	<div class="row"><!-- row1 -->
-		<div class="col-xs-offset-1 col-xs-10">
-			<div class="text-center">
-				<h3 style="font-family: 'Microsoft Yahei'; margin-top: 10px; font-size: 20px;"><strong>请输入查询SQL</strong></h3>
+		<div class="col-xs-offset-1 col-xs-10" style="margin-top: 20px;">
+			<ul class="nav nav-tabs" id="J_tabs">
+				<li class="active"><a id="J_prettify_tab">格式化HQL</a></li>
+				<li class="cursor-pointer"><a id="J_palo_tab">生成导入palo命令</a></li>
+			</ul>
+			<div id="J_prettify_wrapper">
+				<div style="border: 1px solid #ccc; height: 430px;" >
+					<textarea id="J_sql" placeholder="请输入查询SQL..."></textarea>
+				</div>
+				<br/>
+				<div class="text-center form-inline">
+					<input type="text" class="form-control" id="J_date" placeholder="请输入日期：yyyyMMdd" />
+					<button class="btn btn-info" id="J_replaceBtn">替换日期</button>
+					&nbsp;
+					<button class="btn btn-primary" id="J_formatBtn">格式化</button>
+					&nbsp;
+					<button class="btn btn-primary" id="J_clearBtn">&nbsp;清&nbsp;&nbsp;空&nbsp;</button>
+				</div>
 			</div>
-			<div style="border: 2px solid #ccc; border-radius: 5px; height: 430px;" >
-				<textarea id="J_sql"></textarea>
-			</div>
-			<br/>
-			<div class="text-center form-inline">
-				<input type="text" class="form-control" id="J_date" placeholder="请输入日期：yyyyMMdd" />
-				<button class="btn btn-info" id="J_replaceBtn">替换日期</button>
-				&nbsp;
-				<button class="btn btn-primary" id="J_formatBtn">格式化</button>
-				&nbsp;
-				<button class="btn btn-primary" id="J_clearBtn">&nbsp;清&nbsp;&nbsp;空&nbsp;</button>
+			<div id="J_palo_wrapper" style="height: 0px; overflow-y:hidden">
+				<div class="col-xs-6" style="border: 1px solid #ccc; height: 430px; padding: 0px;">
+					<textarea id="J_palo" placeholder="请输入hive建表语句，即“show create table 表名”的结果"></textarea>
+				</div>
+				<div class="col-xs-6">
+					<button id="J_genPaloInfoBtn" class="btn btn-primary">生成palo任务信息</button>
+					<pre style="height: 180px; margin-top: 10px;"></pre>
+				</div>				
 			</div>
 		</div>
 	</div><!-- /row1 -->
@@ -93,6 +124,7 @@ span.cm-cm-overlay.cm-matchhighlight {
 <script type="text/javascript" src="js/codemirror/matchbrackets.js"></script>
 <script type="text/javascript" src="js/codemirror/match-highlighter.js"></script>
 <script type="text/javascript" src="js/codemirror/mysql.js"></script>
+<script type="text/javascript" src="js/codemirror/placeholder.js"></script>
 <script>
 seajs.config({
 	base: './js/',
@@ -103,7 +135,7 @@ seajs.config({
 		'moment': 'moment/moment.js'
 	}
 });
-seajs.use('app/prettify/index', function(index) {
+seajs.use('app/index', function(index) {
 	index.init();
 });
 seajs.use('app/prettify/test', function(test) {

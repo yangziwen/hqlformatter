@@ -2,7 +2,7 @@ define(function(require, exports, module) {
 	
 	// "use strict";
 	
-	var model = require('app/model');
+	var model = require('./model');
 	
 	function testKeyword() {
 		var assertFailed = getFailedAssertion('Assertion of keyword {} failed');

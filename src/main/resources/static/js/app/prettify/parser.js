@@ -3,7 +3,7 @@ define(function(require, exports, module) {
 	"use strict";
 	
 	var _ = require('underscore'),
-		model = require('app/model');
+		model = require('./model');
 	
 	var keywords = [
 		"select",
