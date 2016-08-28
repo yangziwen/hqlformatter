@@ -49,6 +49,7 @@ define(function(require, exports, module) {
 			$wrapper.height(cmHeight);
 			$(document.head).append('<style>.CodeMirror{height:' + cmHeight + 'px;}</style>');
 		}
+		$('#J_paloTableSql').height(cmHeight - 265);
 	}
 	
 	function initGenPaloInfoBtn() {
@@ -64,7 +65,7 @@ define(function(require, exports, module) {
 			common.alertMsg('请输入建表语句!');
 			return;
 		}
-		var re = /CREATE\s+(?:EXTERNAL)?\s+TABLE\s([a-zA-Z_0-9]+)\s*\(([\w\W]+)\)\s*COMMENT\s+'(.*?)'\s+PARTITIONED\s+BY\s+\((.*?)\)\s+ROW\s+FORMAT\s+DELIMITED\s+FIELDS\s+TERMINATED\s+BY\s+'(.*?)'.+LOCATION\s+'(.*?)'/i;
+		var re = /CREATE\s+(?:EXTERNAL)?\s+TABLE\s([a-zA-Z_0-9\.]+)\s*\(([\w\W]+)\)\s*COMMENT\s+'(.*?)'\s+PARTITIONED\s+BY\s+\((.*?)\)\s+ROW\s+FORMAT\s+DELIMITED\s+FIELDS\s+TERMINATED\s+BY\s+'(.*?)'.+LOCATION\s+'(.*?)'/i;
 		sql = sql.trim().replace(/\n/g, ' ');
 		var arr = re.exec(sql);
 		if (arr == null) {
@@ -72,13 +73,18 @@ define(function(require, exports, module) {
 			return;
 		}
 		return {
-			tableName: arr[1],
+			tableName: arr[1].split('.').reverse()[0],
 			fields: $.map(arr[2].trim().split(/,\s+/), function(v) {
-				return v.trim().split(/\s+/)[0];
+				var a = v.trim().split(/\s+/);
+				return {
+					name: a[0],
+					type: a[1],
+					comment: a[3]
+				};
 			}),
 			comment: arr[3],
 			partition: arr[4].trim().split(/\s+/)[0],
-			columnSep: arr[5],
+			columnSep: arr[5].replace('\\u00', new Array(9).join('\\') + 'x'),
 			location: arr[6]
 		};
 	}
@@ -90,7 +96,7 @@ define(function(require, exports, module) {
 		    "'nuomi_crm_dp'",
 		    "'" + info.tableName + "'",
 		    "'" + info.location + "/dt={DATE}/*" + "'",
-		    "'" + info.fields.join(',') + "'",
+		    "'" + $.map(info.fields, function(v) {return v.name}).join(',') + "'",
 		    "'" + info.columnSep + "'"
 		].join(' ');
 	}
