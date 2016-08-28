@@ -86,7 +86,7 @@ span.cm-cm-overlay.cm-matchhighlight {
 		<div class="col-xs-offset-1 col-xs-10" style="margin-top: 20px;">
 			<ul class="nav nav-tabs" id="J_tabs">
 				<li class="active"><a id="J_prettify_tab">格式化HQL</a></li>
-				<li class="cursor-pointer"><a id="J_palo_tab">生成导入palo命令</a></li>
+				<li class="cursor-pointer"><a id="J_palo_tab">生成palo任务信息</a></li>
 			</ul>
 			<div id="J_prettify_wrapper">
 				<div style="border: 1px solid #ccc; height: 430px;" >
@@ -108,7 +108,10 @@ span.cm-cm-overlay.cm-matchhighlight {
 				</div>
 				<div class="col-xs-6">
 					<button id="J_genPaloInfoBtn" class="btn btn-primary">生成palo任务信息</button>
-					<pre style="height: 180px; margin-top: 10px;"></pre>
+					<button id="J_copyTaskName" class="btn btn-info">复制任务名</button>
+					<button id="J_copyTaskCmd" class="btn btn-info">复制任务命令</button>
+					<pre id="J_paloTaskName" style="height: 40px; margin-top: 10px;"></pre>
+					<pre id="J_paloTaskCmd" style="height: 180px; margin-top: 10px; word-wrap: break-word; white-space: pre-wrap;"></pre>
 				</div>				
 			</div>
 		</div>

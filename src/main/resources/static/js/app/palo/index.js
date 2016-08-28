@@ -51,8 +51,53 @@ define(function(require, exports, module) {
 		}
 	}
 	
+	function initGenPaloInfoBtn() {
+		$('#J_genPaloInfoBtn').on('click', function() {
+			var info = parseCreateTableSql(editor.getValue());
+			$('#J_paloTaskName').text('palo2_' + info.tableName);
+			$("#J_paloTaskCmd").text(generateCmd(info));
+		});
+	}
+	
+	function parseCreateTableSql(sql) {
+		if (!sql) {
+			common.alertMsg('请输入建表语句!');
+			return;
+		}
+		var re = /CREATE\s+(?:EXTERNAL)?\s+TABLE\s([a-zA-Z_0-9]+)\s*\(([\w\W]+)\)\s*COMMENT\s+'(.*?)'\s+PARTITIONED\s+BY\s+\((.*?)\)\s+ROW\s+FORMAT\s+DELIMITED\s+FIELDS\s+TERMINATED\s+BY\s+'(.*?)'.+LOCATION\s+'(.*?)'/i;
+		sql = sql.trim().replace(/\n/g, ' ');
+		var arr = re.exec(sql);
+		if (arr == null) {
+			common.alertMsg('请检查输入的建表语句是否正确!');
+			return;
+		}
+		return {
+			tableName: arr[1],
+			fields: $.map(arr[2].trim().split(/,\s+/), function(v) {
+				return v.trim().split(/\s+/)[0];
+			}),
+			comment: arr[3],
+			partition: arr[4].trim().split(/\s+/)[0],
+			columnSep: arr[5],
+			location: arr[6]
+		};
+	}
+	
+	function generateCmd(info) {
+		return [
+		    "cd /home/nuomi/zhuji && sh zhuji_palo2_data_upload.sh",
+		    "'{DATE}'",
+		    "'nuomi_crm_dp'",
+		    "'" + info.tableName + "'",
+		    "'" + info.location + "/dt={DATE}/*" + "'",
+		    "'" + info.fields.join(',') + "'",
+		    "'" + info.columnSep + "'"
+		].join(' ');
+	}
+	
 	function init() {
 		initEditor();
+		initGenPaloInfoBtn();
 	}
 	
 	module.exports = {init: init};
