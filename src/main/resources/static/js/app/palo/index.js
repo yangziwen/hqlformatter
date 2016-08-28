@@ -55,8 +55,12 @@ define(function(require, exports, module) {
 	function initGenPaloInfoBtn() {
 		$('#J_genPaloInfoBtn').on('click', function() {
 			var info = parseCreateTableSql(editor.getValue());
+			if (info == null) {
+				return;
+			}
 			$('#J_paloTaskName').text('palo2_' + info.tableName);
-			$("#J_paloTaskCmd").text(generateCmd(info));
+			$('#J_paloTaskCmd').text(generateCmd(info));
+			$('#J_paloTableSql').text(generateTableSql(info));
 		});
 	}
 	
@@ -99,6 +103,31 @@ define(function(require, exports, module) {
 		    "'" + $.map(info.fields, function(v) {return v.name}).join(',') + "'",
 		    "'" + info.columnSep + "'"
 		].join(' ');
+	}
+	
+	function generateTableSql(info) {
+		var buff = [];
+		buff.push('CREATE TABLE `' + info.tableName + '` (');
+		var arr = $.grep(info.fields, function(field) {
+			return field.name == 'loaddate';
+		});
+		if (arr.length > 0) {
+			buff.push('  `loaddate` bigint COMMENT ' + arr[0].comment + ',');
+		}
+		for (var i = 0, len = info.fields.length; i < len; i++) {
+			var field = info.fields[i];
+			if (field.name == 'loaddate') {
+				continue;
+			}
+			var type = field.type.toLowerCase() == 'string' ? 'varchar(200)' : field.type;
+			buff.push('  `' + field.name + '` ' + type + ' COMMENT ' + field.comment + (i < len - 1 ? ',' : ''));
+		}
+		var hashField = $.grep(info.fields, function(field) {
+			return field.name != 'loaddate';
+		})[0];
+		buff.push(') ENGINE=OLAP')
+		buff.push('DISTRIBUTED BY HASH (`' + hashField.name + '`) BUCKETS 32;');
+		return buff.join('\n');
 	}
 	
 	function init() {
