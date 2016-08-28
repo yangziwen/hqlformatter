@@ -86,7 +86,7 @@ span.cm-cm-overlay.cm-matchhighlight {
 		<div class="col-xs-offset-1 col-xs-10" style="margin-top: 20px;">
 			<ul class="nav nav-tabs" id="J_tabs">
 				<li class="active"><a id="J_prettify_tab">格式化HQL</a></li>
-				<li class="cursor-pointer"><a id="J_palo_tab">生成palo任务信息</a></li>
+				<li class="cursor-pointer"><a id="J_palo_tab">生成palo信息</a></li>
 			</ul>
 			<div id="J_prettify_wrapper">
 				<div style="border: 1px solid #ccc; height: 430px;" >
@@ -99,7 +99,7 @@ span.cm-cm-overlay.cm-matchhighlight {
 					&nbsp;
 					<button class="btn btn-primary" id="J_formatBtn">格式化</button>
 					&nbsp;
-					<button class="btn btn-primary" id="J_clearBtn">&nbsp;清&nbsp;&nbsp;空&nbsp;</button>
+					<button class="btn btn-default" id="J_clearBtn">&nbsp;清&nbsp;&nbsp;空&nbsp;</button>
 				</div>
 			</div>
 			<div id="J_palo_wrapper" style="height: 0px; overflow-y:hidden">
@@ -107,7 +107,11 @@ span.cm-cm-overlay.cm-matchhighlight {
 					<textarea id="J_palo" placeholder="请输入hive建表语句，即“show create table 表名”的结果"></textarea>
 				</div>
 				<div class="col-xs-6">
-					<button id="J_genPaloInfoBtn" class="btn btn-primary">生成palo任务信息</button>
+					<button id="J_genPaloInfoBtn" class="btn btn-sm btn-primary">生成信息</button>
+					<button id="J_copyTaskNameBtn" class="btn btn-sm btn-info">复制任务名</button>
+					<button id="J_copyTaskCmdBtn" class="btn btn-sm btn-info">复制任务命令</button>
+					<button id="J_copyTableSqlBtn" class="btn btn-sm btn-info">复制建表语句</button>
+					<button id="J_clearPaloInfoBtn" class="btn btn-sm btn-default">清&nbsp;&nbsp;空</button>
 					<pre id="J_paloTaskName" style="height: 40px; margin-top: 10px;"></pre>
 					<pre id="J_paloTaskCmd" style="height: 140px; margin-top: 10px; word-wrap: break-word; white-space: pre-wrap;"></pre>
 					<pre id="J_paloTableSql" style="height: 215px; margin-top: 10px;"></pre>
@@ -127,6 +131,7 @@ span.cm-cm-overlay.cm-matchhighlight {
 <script type="text/javascript" src="js/codemirror/match-highlighter.js"></script>
 <script type="text/javascript" src="js/codemirror/mysql.js"></script>
 <script type="text/javascript" src="js/codemirror/placeholder.js"></script>
+<script type="text/javascript" src="js/zeroclipboard/ZeroClipboard.min.js"></script>
 <script>
 seajs.config({
 	base: './js/',

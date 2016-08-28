@@ -49,7 +49,7 @@ define(function(require, exports, module) {
 			$wrapper.height(cmHeight);
 			$(document.head).append('<style>.CodeMirror{height:' + cmHeight + 'px;}</style>');
 		}
-		$('#J_paloTableSql').height(cmHeight - 265);
+		$('#J_paloTableSql').height(cmHeight - 260);
 	}
 	
 	function initGenPaloInfoBtn() {
@@ -64,16 +64,64 @@ define(function(require, exports, module) {
 		});
 	}
 	
+	function initCopyTaskNameBtn() {
+		var client = new ZeroClipboard($('#J_copyTaskNameBtn')[0]);
+		client.on('copy', function(ev) {
+			var content = $('#J_paloTaskName').text();
+			if (content) {
+				client.setText(content);
+				common.alertMsg('任务名称已复制到剪切板!');
+			} else {
+				common.alertMsg('任务名称未生成!');
+			}
+		});
+	}
+	
+	function initCopyTaskCmdBtn() {
+		var client = new ZeroClipboard($('#J_copyTaskCmdBtn')[0]);
+		client.on('copy', function(ev) {
+			var content = $('#J_paloTaskCmd').text();
+			if (content) {
+				client.setText(content);
+				common.alertMsg('任务命令已复制到剪切板!');
+			} else {
+				common.alertMsg('任务命令未生成!');
+			}
+		});
+	}
+	
+	function initCopyTableSqlBtn() {
+		var client = new ZeroClipboard($('#J_copyTableSqlBtn')[0]);
+		client.on('copy', function(ev) {
+			var content = $('#J_paloTableSql').text();
+			if (content) {
+				client.setText(content);
+				common.alertMsg('建表语句已复制到剪切板!');
+			} else {
+				common.alertMsg('建表语句未生成!');
+			}
+		});
+	}
+	
+	function initClearPaloInfoBtn() {
+		$('#J_clearPaloInfoBtn').on('click', function() {
+			$('#J_paloTaskName').text('');
+			$('#J_paloTaskCmd').text('');
+			$('#J_paloTableSql').text('');
+			editor.setValue('');
+		});
+	}
+	
 	function parseCreateTableSql(sql) {
 		if (!sql) {
-			common.alertMsg('请输入建表语句!');
+			common.alertMsg('请先输入hive建表语句!');
 			return;
 		}
 		var re = /CREATE\s+(?:EXTERNAL)?\s+TABLE\s([a-zA-Z_0-9\.]+)\s*\(([\w\W]+)\)\s*COMMENT\s+'(.*?)'\s+PARTITIONED\s+BY\s+\((.*?)\)\s+ROW\s+FORMAT\s+DELIMITED\s+FIELDS\s+TERMINATED\s+BY\s+'(.*?)'.+LOCATION\s+'(.*?)'/i;
 		sql = sql.trim().replace(/\n/g, ' ');
 		var arr = re.exec(sql);
 		if (arr == null) {
-			common.alertMsg('请检查输入的建表语句是否正确!');
+			common.alertMsg('请检查输入的hive建表语句是否正确!');
 			return;
 		}
 		return {
@@ -133,6 +181,10 @@ define(function(require, exports, module) {
 	function init() {
 		initEditor();
 		initGenPaloInfoBtn();
+		initCopyTaskNameBtn();
+		initCopyTaskCmdBtn();
+		initCopyTableSqlBtn();
+		initClearPaloInfoBtn();
 	}
 	
 	module.exports = {init: init};
