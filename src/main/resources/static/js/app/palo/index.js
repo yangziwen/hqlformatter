@@ -117,7 +117,7 @@ define(function(require, exports, module) {
 			common.alertMsg('请先输入hive建表语句!');
 			return;
 		}
-		var re = /CREATE\s+(?:EXTERNAL)?\s+TABLE\s([a-zA-Z_0-9\.]+)\s*\(([\w\W]+)\)\s*COMMENT\s+'(.*?)'\s+PARTITIONED\s+BY\s+\((.*?)\)\s+ROW\s+FORMAT\s+DELIMITED\s+FIELDS\s+TERMINATED\s+BY\s+'(.*?)'.+LOCATION\s+'(.*?)'/i;
+		var re = /CREATE\s+(?:EXTERNAL\s+)?TABLE\s([a-zA-Z_0-9\.]+)\s*\(([\w\W]+)\)\s*COMMENT\s+'(.*?)'\s+PARTITIONED\s+BY\s+\((.*?)\)\s+ROW\s+FORMAT\s+DELIMITED\s+FIELDS\s+TERMINATED\s+BY\s+'(.*?)'.+LOCATION\s+'(.*?)'/i;
 		sql = sql.trim().replace(/\n/g, ' ');
 		var arr = re.exec(sql);
 		if (arr == null) {
