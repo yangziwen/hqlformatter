@@ -131,7 +131,7 @@ define(function(require, exports, module) {
 				return {
 					name: a[0],
 					type: a[1],
-					comment: a[3]
+					comment: a.slice(3).join(' ')
 				};
 			}),
 			comment: arr[3],
