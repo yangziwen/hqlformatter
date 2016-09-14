@@ -42,6 +42,8 @@ public class Parser {
 	}
 	
 	public static Query parseSelectSql(String sql) {
+		sql = sql.replaceAll("\\/\\*[\\w\\W]*?\\*\\/", "");	// 清除多行注释
+		sql = sql.replaceAll("\t", "    ");
 		return parseQuery(sql, 0);
 	}
 	
@@ -95,7 +97,7 @@ public class Parser {
 			.addWheres(whereList)
 			.addGroupBys(groupByList)
 			.start(selectKeyword.start())
-			.end(endPos - 1)
+			.end(endPos)
 		;
 	}
 	
@@ -186,7 +188,7 @@ public class Parser {
 			return tables;
 		}
 		while(nextKeyword.contains("join")) {
-			table = parseJoinTable(sql, table.end() + 1);
+			table = parseJoinTable(sql, table.end());
 			if(table != null) {
 				tables.add(table);
 			}
@@ -217,13 +219,9 @@ public class Parser {
 				}
 			}
 		}
-		Table<?> table = null;
-		if(c == '(') {
-			table = parseQueryTable(sql, i + 1);
-		} else {
-			table = parseSimpleTable(sql, i);
-		}
-		return table;
+		return c == '('
+				? parseQueryTable(sql, i)
+				: parseSimpleTable(sql, i);
 	}
 	
 	/**
@@ -247,7 +245,7 @@ public class Parser {
 			nextKeyword = findKeyWord(sql, curPos);
 			if(nextKeyword.is("on")) {
 				Keyword onKeyword = nextKeyword;
-				nextKeyword = findKeyWord(sql, onKeyword.end() + 1);
+				nextKeyword = findKeyWord(sql, onKeyword.end());
 				int endPos = findEndBracket(sql, start, nextKeyword.start());
 				if(endPos == -1) {
 					endPos = nextKeyword.start() - 1;
@@ -265,12 +263,12 @@ public class Parser {
 	 */
 	private static Table<?> parseQueryTable(String sql, int start) {
 		Query query = parseQuery(sql, start);
-		Keyword nextKeyword = findKeyWord(sql, query.end() + 1);
+		Keyword nextKeyword = findKeyWord(sql, query.end());
 		if(!nextKeyword.is("union all")) {
-			int endPos = findEndBracket(sql, query.end() + 1, nextKeyword.start());
+			int endPos = findEndBracket(sql, query.end(), nextKeyword.start());
 			int nextEndPos = findEndBracket(sql, endPos + 1, nextKeyword.start());
 			if(nextEndPos == -1 || nextEndPos > nextKeyword.start()) {
-				nextEndPos = nextKeyword.start();
+				nextEndPos = nextKeyword.start() - 1;
 			}
 			String alias = sql.substring(endPos + 1, nextEndPos).trim().split("\\s+")[0];
 			QueryTable queryTable = new QueryTable(query).alias(alias)
@@ -280,13 +278,12 @@ public class Parser {
 		}
 		// 处理union all的情形
 		Keyword unionKeyword = nextKeyword;
-		UnionTable unionTable = new UnionTable();
 		QueryTable table = new QueryTable(query)
 				.start(start).end(unionKeyword.start() - 1);
-		unionTable.addUnionTable(table);
+		UnionTable unionTable = new UnionTable().addUnionTable(table);
 		while(nextKeyword.is("union all")) {
 			unionKeyword = nextKeyword;
-			query = parseQuery(sql, unionKeyword.end() + 1);
+			query = parseQuery(sql, unionKeyword.end());
 			table = new QueryTable(query).start(unionKeyword.end() + 1).end(query.end());
 			unionTable.addUnionKeyword(unionKeyword).addUnionTable(table);
 			nextKeyword = findKeyWord(sql, table.end());
@@ -374,11 +371,8 @@ public class Parser {
 	private static int findCrlf(String sql, int start) {
 		int crIdx = sql.indexOf("\r", start);
 		int lfIdx = sql.indexOf("\n", start);
-		if(crIdx == -1 && lfIdx == -1) {
-			return -1;
-		}
 		int crlfIdx = Math.max(crIdx, lfIdx);
-		if(crlfIdx <= start ) {
+		if(crlfIdx == -1 || crlfIdx <= start ) {
 			return -1;
 		}
 		return crlfIdx;

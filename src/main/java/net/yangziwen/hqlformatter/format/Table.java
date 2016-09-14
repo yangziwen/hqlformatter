@@ -4,28 +4,28 @@ import java.io.StringWriter;
 
 public interface Table<T extends Table<T>> {
 	
-	public String table();
+	String table();
 	
-	public String alias();
+	String alias();
 	
-	public T alias(String alias);
+	T alias(String alias);
 	
-	public int start();
+	int start();
 	
-	public T start(int startPos);
+	T start(int startPos);
 	
-	public int end();
+	int end();
 	
-	public T end(int endPos);
+	T end(int endPos);
 	
-	public Comment headComment();
+	Comment headComment();
 	
-	public T headComment(Comment comment);
+	T headComment(Comment comment);
 	
-	public Comment tailComment();
+	Comment tailComment();
 	
-	public T tailComment(Comment comment);
+	T tailComment(Comment comment);
 	
-	public StringWriter format(String indent, int nestedDepth, StringWriter writer);
+	StringWriter format(String indent, int nestedDepth, StringWriter writer);
 	
 }

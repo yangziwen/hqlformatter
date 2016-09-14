@@ -14,6 +14,11 @@ public class SimpleTable extends AbstractTable<SimpleTable> implements Table<Sim
 		this.startPos = startPos;
 		this.endPos = endPos;
 	}
+	
+	public SimpleTable table(String table) {
+		this.table = table;
+		return this;
+	}
 
 	@Override
 	public String table() {
