@@ -132,4 +132,22 @@ public class BaseRepository<E> extends ReadOnlyBaseRepository<E> {
 		}
 	}
 	
+	public void deleteByParams(Map<String, Object> params) {
+		StringBuilder sqlBuff = new StringBuilder("DELETE FROM ")
+				.append(modelMapping.getTable(params));
+		appendWhere(params, sqlBuff);
+		Connection conn = null;
+		try {
+			conn = sql2o.open();
+			Query query = conn.createQuery(sqlBuff.toString());
+			for (Entry<String, Object> entry : params.entrySet()) {
+				query.addParameter(entry.getKey(), entry.getValue());
+			}
+			query.executeUpdate();
+		} finally {
+			conn.close();
+		}
+		
+	}
+	
 }

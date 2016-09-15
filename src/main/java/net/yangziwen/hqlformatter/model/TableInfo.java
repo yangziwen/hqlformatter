@@ -16,6 +16,13 @@ public class TableInfo {
 	
 	@Column
 	private String tableName;
+	
+	public TableInfo() {}
+	
+	public TableInfo(String database, String tableName) {
+		this.database = database;
+		this.tableName = tableName;
+	}
 
 	public Long getId() {
 		return id;
@@ -44,6 +51,11 @@ public class TableInfo {
 	@Override
 	public String toString() {
 		return "TableInfo[id=" + id + ", database=" + database + ", tableName=" + tableName + "]";
+	}
+	
+	public static TableInfo parse(String fullTableName) {
+		String[] array = fullTableName.split("\\.");
+		return new TableInfo(array[0], array[1]);
 	}
 
 }

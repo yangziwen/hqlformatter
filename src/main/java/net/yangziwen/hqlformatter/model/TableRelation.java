@@ -1,12 +1,28 @@
 package net.yangziwen.hqlformatter.model;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Table(name = "table_relation")
 public class TableRelation {
 	
+	@Id
+	@Column
 	private Long id;
 	
+	@Column
 	private Long tableId;
 	
+	@Column
 	private Long dependentTableId;
+	
+	public TableRelation() {};
+
+	public TableRelation(Long tableId, Long dependentTableId) {
+		this.tableId = tableId;
+		this.dependentTableId = dependentTableId;
+	}
 
 	public Long getId() {
 		return id;
