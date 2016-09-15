@@ -187,7 +187,7 @@ public class Parser {
 		List<Table<?>> tables = new ArrayList<Table<?>>();
 		Table<?> table = parseTable(sql, start);
 		tables.add(table);
-		Keyword nextKeyword = findKeyWord(sql, table.end() + 1);
+		Keyword nextKeyword = findKeyWord(sql, table.end());
 		if(findEndBracket(sql, table.end(), nextKeyword.start()) > 0) {
 			return tables;
 		}

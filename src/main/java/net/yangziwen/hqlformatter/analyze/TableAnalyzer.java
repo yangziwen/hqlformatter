@@ -18,20 +18,24 @@ import net.yangziwen.hqlformatter.model.TableInfo;
 import net.yangziwen.hqlformatter.util.StringUtils;
 
 public class TableAnalyzer {
-
-	public static Result analyze(String sql) {
+	
+	public static Result analyze(String sql, String defaultDatabase) {
 		int startPos = -1;
 		if (StringUtils.isBlank(sql) || (startPos = sql.toLowerCase().indexOf("select")) == -1) {
 			return null;
 		}
-		TableInfo table = TableInfo.parse(parseTableName(sql.substring(0, startPos)));
+		String tableName = parseTableName(sql.substring(0, startPos));
+		if (StringUtils.isBlank(tableName)) {
+			return null;
+		}
+		TableInfo table = TableInfo.parse(tableName, defaultDatabase);
 		Result result = new Result(table);
 		
 		Query query = Parser.parseSelectSql(sql.substring(startPos));
 		Set<SimpleTable> simpleTableSet = new TreeSet<SimpleTable>();
 		collectSimpleTables(query.tableList(), simpleTableSet);
 		for (SimpleTable st : simpleTableSet) {
-			TableInfo t = TableInfo.parse(st.table());
+			TableInfo t = TableInfo.parse(st.table(), defaultDatabase);
 			result.addDependentTable(t);
 		}
 		return result;

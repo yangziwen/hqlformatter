@@ -10,6 +10,7 @@ import net.yangziwen.hqlformatter.model.TableRelation;
 import net.yangziwen.hqlformatter.repository.TableInfoRepo;
 import net.yangziwen.hqlformatter.repository.TableRelationRepo;
 import net.yangziwen.hqlformatter.repository.base.QueryMap;
+import net.yangziwen.hqlformatter.util.StringUtils;
 
 public class TableService {
 
@@ -43,6 +44,11 @@ public class TableService {
 				.param("database", table.getDatabase())
 				.param("tableName", table.getTableName()));
 		if (tbl != null) {
+			if (StringUtils.isNotBlank(table.getDescription())
+					&& !table.getDescription().equals(tbl.getDescription())) {
+				tbl.setDescription(table.getDescription());
+				tableInfoRepo.update(tbl);
+			}
 			return tbl;
 		}
 		tableInfoRepo.insert(table);
