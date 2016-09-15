@@ -4,7 +4,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.yangziwen.hqlformatter.util.CollectionUtils;
+import net.yangziwen.hqlformatter.util.Utils;
 import net.yangziwen.hqlformatter.util.StringUtils;
 
 
@@ -54,7 +54,7 @@ public class JoinTable extends AbstractTable<JoinTable> implements Table<JoinTab
 		writer.append("\n").append(baseIndent)
 			.append(joinType.name()).append(" ");
 		baseTable.format(indent, nestedDepth, writer);
-		if(CollectionUtils.isNotEmpty(joinOnList)) {
+		if(Utils.isNotEmpty(joinOnList)) {
 			writer.append("\n").append(baseIndent)
 				.append("ON").append(" ").append(joinOnList.get(0));
 			for(int i = 1; i < joinOnList.size(); i++) {

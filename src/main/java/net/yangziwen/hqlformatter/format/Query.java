@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import net.yangziwen.hqlformatter.util.CollectionUtils;
+import net.yangziwen.hqlformatter.util.Utils;
 import net.yangziwen.hqlformatter.util.StringUtils;
 
 public class Query {
@@ -132,7 +132,7 @@ public class Query {
 	}
 	
 	private Query formatWhere(String indent, int nestedDepth, StringWriter writer) {
-		if(CollectionUtils.isEmpty(whereList)) {
+		if(Utils.isEmpty(whereList)) {
 			return this;
 		}
 		String sep = chooseSeprator(whereList, indent, nestedDepth + 1);
@@ -152,7 +152,7 @@ public class Query {
 	}
 	
 	private Query formatGroupBy(String indent, int nestedDepth, StringWriter writer) {
-		if(CollectionUtils.isEmpty(groupByList)) {
+		if(Utils.isEmpty(groupByList)) {
 			return this;
 		}
 		writer.append("\n").append(StringUtils.repeat(indent, nestedDepth))

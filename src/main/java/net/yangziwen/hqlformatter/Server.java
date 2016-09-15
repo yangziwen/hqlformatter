@@ -8,7 +8,7 @@ import java.net.Socket;
 import java.util.concurrent.TimeUnit;
 
 import net.yangziwen.hqlformatter.controller.SqlController;
-import net.yangziwen.hqlformatter.util.IOUtils;
+import net.yangziwen.hqlformatter.util.Utils;
 import spark.Spark;
 
 public class Server {
@@ -90,7 +90,7 @@ public class Server {
 		} catch (IOException e) {
 			return false;
 		} finally {
-			IOUtils.closeQuietly(s);
+			Utils.closeQuietly(s);
 		}
 	}
 	

@@ -4,7 +4,7 @@ import java.io.StringWriter;
 
 import net.yangziwen.hqlformatter.util.StringUtils;
 
-public class SimpleTable extends AbstractTable<SimpleTable> implements Table<SimpleTable> {
+public class SimpleTable extends AbstractTable<SimpleTable> implements Table<SimpleTable>, Comparable<SimpleTable> {
 	
 	private String table;
 	
@@ -40,6 +40,17 @@ public class SimpleTable extends AbstractTable<SimpleTable> implements Table<Sim
 			writer.append("  ").append(headComment().content());
 		}
 		return writer;
+	}
+
+	@Override
+	public int compareTo(SimpleTable other) {
+		if (other == null || StringUtils.isBlank(other.table)) {
+			return 1;
+		}
+		if (StringUtils.isBlank(table)) {
+			return -1;
+		}
+		return table.compareTo(other.table);
 	}
 
 }

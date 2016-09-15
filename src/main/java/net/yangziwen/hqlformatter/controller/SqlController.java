@@ -33,7 +33,6 @@ public class SqlController {
 					resultMap.put("msg", ERROR_PARAM.msg());
 					return resultMap;
 				}
-				sql = purifySql(sql);
 				try {
 					Query query = Parser.parseSelectSql(sql);
 					resultMap.put("code",  OK.code());
@@ -54,12 +53,6 @@ public class SqlController {
 			}
 		});
 		
-	}
-	
-	private static String purifySql(String sql) {
-		sql = sql.replaceAll("/\\*[\\w\\W]*?\\*/", "");
-		sql = sql.replace("\t", "    ");
-		return sql + "   ";
 	}
 	
 	public static enum CodeEnum {

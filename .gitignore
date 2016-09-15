@@ -1,6 +1,7 @@
 .metadata/
 target/
 bin/
+db/
 src/main/webapp/WEB-INF/classes/
 .project
 .classpath

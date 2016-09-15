@@ -41,10 +41,14 @@ public class Parser {
 		return Pattern.compile("(?<=^|[^_\\-0-9a-zA-Z\u4e00-\u9fa5])(" + StringUtils.join(keywordRegexList, "|") + ")(?=[^_0-9a-zA-Z\u4e00-\u9fa5])", Pattern.CASE_INSENSITIVE);
 	}
 	
+	private static String purifySql(String sql) {
+		sql = sql.replaceAll("/\\*[\\w\\W]*?\\*/", "");
+		sql = sql.replace("\t", "    ");
+		return sql + "   ";
+	}
+	
 	public static Query parseSelectSql(String sql) {
-		sql = sql.replaceAll("\\/\\*[\\w\\W]*?\\*\\/", "");	// 清除多行注释
-		sql = sql.replaceAll("\t", "    ");
-		return parseQuery(sql, 0);
+		return parseQuery(purifySql(sql), 0);
 	}
 	
 	/**
