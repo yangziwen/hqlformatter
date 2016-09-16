@@ -48,7 +48,7 @@ public class ReadOnlyBaseRepository<E> {
 	public List<E> list(Map<String, Object> params) {
 		return list(0, Integer.MAX_VALUE, params);
 	}
-
+	
 	public List<E> list(int offset, int limit, Map<String, Object> params) {
 		params = new HashMap<String, Object>(params);
 		StringBuilder buff = new StringBuilder();
@@ -58,7 +58,7 @@ public class ReadOnlyBaseRepository<E> {
 		appendGroupBy(params, buff);
 		appendOrderBy(params, buff);
 		appendLimit(offset, limit, buff);
-		return doList(buff.toString(), params);
+		return doList(processSqlAndParams(buff.toString(), params), params);
 	}
 
 	protected List<E> doList(String sql, Map<String, Object> params) {
@@ -92,7 +92,7 @@ public class ReadOnlyBaseRepository<E> {
 			appendFrom(params, buff);
 			appendWhere(params, buff);
 		}
-		return doCount(buff.toString(), params);
+		return doCount(processSqlAndParams(buff.toString(), params), params);
 	}
 
 	protected Integer doCount(String sql, Map<String, Object> params) {
@@ -110,6 +110,30 @@ public class ReadOnlyBaseRepository<E> {
 	}
 
 	// ------- 内部方法 -------- //
+
+	private String processSqlAndParams(String sql, Map<String, Object> params) {
+		List<String> keysToDelete = new ArrayList<String>();
+		for (Entry<String, Object> entry : params.entrySet()) {
+			if (!(entry.getValue() instanceof Collection)) {
+				continue;
+			}
+			Collection<?> coll = (Collection<?>) entry.getValue();
+			StringBuilder keys = new StringBuilder();
+			int idx = 0;
+			for (Object obj : coll) {
+				String k = entry.getKey() + "__" + idx;
+				keys.append(idx > 0 ? ", :" : "").append(k);
+				params.put(k, obj);
+				idx ++;
+			}
+			sql = sql.replace(entry.getKey(), keys.toString());
+			keysToDelete.add(entry.getKey());
+		}
+		for (String key : keysToDelete) {
+			params.remove(key);
+		}
+		return sql;
+	}
 
 	protected void appendSelect(Map<String, Object> params, StringBuilder buff) {
 		buff.append("SELECT ");
