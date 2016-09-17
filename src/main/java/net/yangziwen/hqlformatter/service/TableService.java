@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import net.yangziwen.hqlformatter.analyze.TableAnalyzer.Result;
@@ -22,6 +23,14 @@ public class TableService {
 	private static TableInfoRepo tableInfoRepo = new TableInfoRepo(getDataSource());
 	
 	private static TableRelationRepo tableRelationRepo = new TableRelationRepo(getDataSource());
+	
+	public static List<TableInfo> getTableInfoList(int offset, int limit, Map<String, Object> params) {
+		return tableInfoRepo.list(offset, limit, params);
+	}
+	
+	public static List<TableRelation> getTableRelationList(int offset, int limit, Map<String, Object> params) {
+		return tableRelationRepo.list(offset, limit, params);
+	}
 	
 	public static List<TableInfo> getUpstreamTables(List<Long> tableIdList, int depth) {
 		Set<Long> dependentIdSet = new HashSet<Long>();
