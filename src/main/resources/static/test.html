@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>珠玑助手</title>
+<link rel="stylesheet" href="css/bootstrap.min.css"/>
+<link rel="shortcut icon" href="img/favicon.ico"/>
+<style>
+#canvas {
+	width: 1200px; 
+	height: 800px; 
+	/*border: 1px solid #ddd;*/ 
+	margin: 50px auto 0px;
+	position: relative;
+}
+.tbl-wrapper {
+	position: absolute;
+	width: 150px;
+	border: 1px solid #ccc;
+	text-align: center;
+	font-size: 14px;
+	border-radius: 5px;
+	cursor: pointer;
+word-wrap: break-word; white-space: pre-wrap	
+}
+</style>
+</head>
+<body>
+<div>
+	<div id="canvas">
+<!-- 		<div id="tbl_1" class="tbl-rect" style="top: 50px; left: 100px;">dp_ztc_d_saler_performance_detail_month</div>
+		<div id="tbl_2" class="tbl-rect" style="top: 200px; left: 200px;">test 02</div>
+		<div id="tbl_3" class="tbl-rect" style="top: 300px; left: 100px;">test 03</div> -->
+	</div>
+</div>
+<script type="text/javascript" src="js/jquery/jquery.js"></script>
+<script type="text/javascript" src="js/jsplumb/jsPlumb-2.1.7-min.js"></script>
+<script>
+jsPlumb.bind('ready', function() {
+	
+	var anchors = ['Top', 'Bottom', 'Left', 'Right', 'TopRight', 'TopLeft', 'BottomRight', 'BottomLeft'];
+	
+	var instance = jsPlumb.getInstance({
+		Endpoint: ['Dot', {radius : 2}],
+		Connector: 'Straight',
+//		Connector: 'StateMachine',
+		//HoverPaintStyle: {strokeStyle: "#1e8151", lineWidth: 2 },
+		ConnectionOverlays: [
+		    ['Arrow', {
+		    	location: 1,
+		    	id: 'arrow',
+		    	width: 10,
+		    	length: 10,
+		    	foldback: 0.5
+		    }]
+		]
+	});
+	
+	var instance2 = jsPlumb.getInstance({
+		Endpoint: ['Dot', {radius : 2}],
+		Connector: 'StateMachine',
+		ConnectionOverlays: [
+		    ['Arrow', {
+		    	location: 1,
+		    	id: 'arrow',
+		    	width: 10,
+		    	length: 10,
+		    	foldback: 0.5
+		    }]
+		]
+	});
+	
+	instance.registerConnectionType("basic", { 
+		anchor:"Continuous"
+	});
+	
+	$.get('/table/graph/3', function(result) {
+		if (result.code !== 0) {
+			alert(result.msg);
+			return;
+		}
+		var graph = result.data;
+		
+		var table = graph.table;
+		
+		table.style = {
+			'border-width': 2,
+			'border-color': '#bbb',
+			'font-weight': 'bold'
+		};
+		
+		for (var l = graph.derivedLayers.length,  i = l - 1; i >= 0 ; i--) {
+			var layer = graph.derivedLayers[i];
+			for (var j = 0; j < layer.length; j++) {
+				createTableWrapper(layer[j], j * 180, (l - i - 1) * 100);
+			}
+		}
+		
+		createTableWrapper(table, 0, l * 100);
+		
+		for (var i = 0; i < graph.dependentLayers.length; i++) {
+			var layer = graph.dependentLayers[i];
+			for (var j = 0; j < layer.length; j++) {
+				createTableWrapper(layer[j], j * 180, (l + i + 1) * 100);
+			}
+		}
+		
+		for (var i = 0; i < graph.derivedLayers.length - 1; i++) {
+			var layer = graph.derivedLayers[i];
+			for (var j = 0; j < layer.length; j++) {
+				var tbl = layer[j];
+				for (var k = 0; k < tbl.derivedIds.length; k++) {
+					connectTableWrapper(tbl.id, tbl.derivedIds[k]);
+				}
+				
+			}
+		}
+		
+		for (var i = 0; i < table.derivedIds.length; i++) {
+			if (table.id == table.derivedIds[i]) {
+				connectTableWrapper2(table.id, table.derivedIds[i]);
+			} else {
+				connectTableWrapper(table.id, table.derivedIds[i]);
+			}
+		}
+		
+		for (var i = 0; i < table.dependentIds.length; i++) {
+			connectTableWrapper(table.dependentIds[i], table.id);
+		}
+		
+		for (var i = 0; i < graph.dependentLayers.length - 1; i++) {
+			var layer = graph.dependentLayers[i];
+			for (var j = 0; j < layer.length; j++) {
+				var tbl = layer[j];
+				for (var k = 0; k < tbl.dependentIds.length; k++) {
+					connectTableWrapper(tbl.dependentIds[k], tbl.id);
+				}
+			}
+		}
+		
+		instance.draggable($('.tbl-wrapper'));
+		
+	});
+	
+	function connectTableWrapper(sourceId, targetId) {
+		instance.connect({
+			source: 'tbl-wrapper-' + sourceId,
+			target: 'tbl-wrapper-' + targetId,
+			anchor: anchors,
+			paintStyle: {strokeStyle: "#5c96bc", lineWidth: 2 }
+		});
+	}
+	
+	function connectTableWrapper2(sourceId, targetId) {
+		instance2.connect({
+			source: 'tbl-wrapper-' + sourceId,
+			target: 'tbl-wrapper-' + targetId,
+			anchor: anchors,
+			paintStyle: {strokeStyle: "#5c96bc", lineWidth: 2 }
+		});
+	}
+	
+	function createTableWrapper(tbl, left, top) {
+		$('<div>')
+			.data('id', tbl.id)
+			.attr('id', 'tbl-wrapper-' + tbl.id)
+			.attr('title', tbl.database + '.' + tbl.tableName)
+			.text(tbl.tableName)
+			.addClass('tbl-wrapper')
+			.css($.extend({
+				left: left,
+				top: top
+			}, tbl.style))
+			.appendTo('#canvas');
+	}
+	
+	/* instance.draggable($('.tbl-rect'));
+	instance.connect({
+		source: 'tbl_1',
+		target: 'tbl_2',
+		anchor: anchors
+	});
+	
+	instance.connect({
+		source: 'tbl_1',
+		target: 'tbl_3',
+		anchor: anchors
+	});
+	
+	instance.connect({
+		source: 'tbl_2',
+		target: 'tbl_3',
+		anchor: anchors
+	});
+	
+	instance.connect({
+		source: 'tbl_1',
+		target: 'tbl_1',
+		anchor: 'Continuous'
+	}); */
+});
+</script>
+</body>
+</html>
