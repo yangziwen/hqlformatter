@@ -1,10 +1,9 @@
 package net.yangziwen.hqlformatter.controller;
 
-import static net.yangziwen.hqlformatter.controller.SqlController.CodeEnum.ERROR_PARAM;
-import static net.yangziwen.hqlformatter.controller.SqlController.CodeEnum.OK;
-import static net.yangziwen.hqlformatter.controller.SqlController.CodeEnum.PARSE_FAILED;
+import static net.yangziwen.hqlformatter.controller.CodeEnum.ERROR_PARAM;
+import static net.yangziwen.hqlformatter.controller.CodeEnum.OK;
+import static net.yangziwen.hqlformatter.controller.CodeEnum.PARSE_FAILED;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
@@ -26,25 +25,21 @@ public class SqlController {
 			@Override
 			public Object handle(Request request, Response response) throws Exception {
 				response.type("application/json");
-				Map<String, Object> resultMap = new HashMap<String, Object>();
 				String sql = request.queryParams("sql");
-				if(StringUtils.isBlank(sql)) {
-					resultMap.put("code", ERROR_PARAM.code());
-					resultMap.put("msg", ERROR_PARAM.msg());
-					return resultMap;
+				if (StringUtils.isBlank(sql)) {
+					return ERROR_PARAM.toResult();
 				}
 				try {
 					Query query = Parser.parseSelectSql(sql);
-					resultMap.put("code",  OK.code());
 					String fomattedSql = query.toString().replaceAll("(?m)^\\s*$\\n", ""); // 暂时先去除空行
+					Map<String, Object> resultMap = OK.toResult();
 					resultMap.put("data", fomattedSql);	
+					return resultMap;
 				} catch (Exception e) {
 					System.err.println("failed to parse sql");
 					e.printStackTrace();
-					resultMap.put("code", PARSE_FAILED.code());
-					resultMap.put("msg", PARSE_FAILED.msg());
+					return PARSE_FAILED.toResult();
 				}
-				return resultMap;
 			}
 		}, new ResponseTransformer() {
 			@Override
@@ -52,31 +47,6 @@ public class SqlController {
 				return JSON.toJSONString(model);
 			}
 		});
-		
-	}
-	
-	public static enum CodeEnum {
-		
-		OK(0, ""),
-		ERROR_PARAM(1, "参数有误!"),
-		PARSE_FAILED(101, "sql格式化失败!")
-		;
-		
-		private int code;
-		private String msg;
-		
-		private CodeEnum(int code, String msg) {
-			this.code = code;
-			this.msg = msg;
-		}
-
-		public int code() {
-			return code;
-		}
-
-		public String msg() {
-			return msg;
-		}
 		
 	}
 	

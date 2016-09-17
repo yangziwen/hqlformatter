@@ -253,7 +253,9 @@ public class TableCache {
 					idSet.add(tbl.getId());
 					tableIds.add(tbl.getId());
 				}
-				layers.add(layer);
+				if (Utils.isNotEmpty(layer)) {
+					layers.add(layer);
+				}
 				depth --;
 			}
 			this.dependentLayers = layers;
@@ -276,7 +278,9 @@ public class TableCache {
 					idSet.add(tbl.getId());
 					tableIds.add(tbl.getId());
 				}
-				layers.add(layer);
+				if (Utils.isNotEmpty(layer)) {
+					layers.add(layer);
+				}
 				depth --;
 			}
 			this.derivedLayers = layers;
