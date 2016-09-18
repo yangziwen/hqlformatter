@@ -30,6 +30,7 @@ define(function(require, exports, module) {
 					.attr('title', v.database + '.' + v.tableName)
 			});
 			$('.tbl-list').empty().append($list).append('<div style="padding: 0px;"/>');
+			$('#J_table_count').text($list.length);
 		});
 	}
 	
@@ -60,32 +61,33 @@ define(function(require, exports, module) {
 	
 	function initDatabaseSelect() {
 		var $listWrapper = $('.tbl-list');
+		var $tableCount = $('#J_table_count');
 		$('#J_database').on('change', function() {
+			var cnt = 0;
 			database = $(this).val();
 			$listWrapper.children().each(function(i, tbl) {
 				var $tbl = $(tbl);
+				if (!$tbl.data('id')) {
+					return;
+				}
 				var tblName = $tbl.data('tableName'),
 					db = $tbl.data('database');
 				if (tblName.indexOf(tableName) >= 0 && db.indexOf(database) >= 0) {
 					$tbl.show();
+					cnt ++;
 				} else {
 					$tbl.hide();
 				}
 			});
-		});
-	}
-	
-	function initDepthSelect() {
-		$('#J_depth').on('change', function() {
-			if ($selectedTbl != null) {
-				graph.render($selectedTbl.data('id'));
-			}
+			$tableCount.text(cnt);
 		});
 	}
 	
 	function initTableNameInput() {
 		var $listWrapper = $('.tbl-list');
+		var $tableCount = $('#J_table_count');
 		$('#J_table_name').on('keyup', function() {
+			var cnt = 0;
 			tableName = $(this).val();
 			$listWrapper.children().each(function(i, tbl) {
 				var $tbl = $(tbl);
@@ -96,10 +98,20 @@ define(function(require, exports, module) {
 					db = $tbl.data('database');
 				if (tblName.indexOf(tableName) >= 0 && db.indexOf(database) >= 0) {
 					$tbl.show();
+					cnt ++;
 				} else {
 					$tbl.hide();
 				}
 			});
+			$tableCount.text(cnt);
+		});
+	}
+	
+	function initDepthSelect() {
+		$('#J_depth').on('change', function() {
+			if ($selectedTbl != null) {
+				graph.render($selectedTbl.data('id'));
+			}
 		});
 	}
 	

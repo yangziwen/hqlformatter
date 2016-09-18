@@ -116,7 +116,7 @@ define(function(require, exports, module) {
 			.data('id', tbl.id)
 			.attr('id', 'tbl-wrapper-' + tbl.id)
 			.attr('title', tbl.database + '.' + tbl.tableName)
-			.text(tbl.tableName)
+			.html('&lt;' + tbl.database + '&gt;<br/>' + tbl.tableName)
 			.addClass('tbl-wrapper')
 			.css($.extend({
 				left: left + 10,
