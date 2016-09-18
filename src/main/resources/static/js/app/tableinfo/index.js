@@ -7,6 +7,7 @@ define(function(require, exports, module) {
 		graph = require('app/tableinfo/graph');
 	
 	var full = false;	// 是否全屏
+	var $selectedTbl = null;
 	
 	function resize() {
 		var height = common.calSuitableHeight();
@@ -74,6 +75,14 @@ define(function(require, exports, module) {
 		});
 	}
 	
+	function initDepthSelect() {
+		$('#J_depth').on('change', function() {
+			if ($selectedTbl != null) {
+				graph.render($selectedTbl.data('id'));
+			}
+		});
+	}
+	
 	function initTableNameInput() {
 		var $listWrapper = $('.tbl-list');
 		$('#J_table_name').on('keyup', function() {
@@ -95,13 +104,12 @@ define(function(require, exports, module) {
 	}
 	
 	function initRenderGraph() {
-		var $selected = null;
 		$('.tbl-list').on('click', 'div', function() {
-			if ($selected != null) {
-				$selected.removeClass('selected');
+			if ($selectedTbl != null) {
+				$selectedTbl.removeClass('selected');
 			}
-			$selected = $(this).addClass('selected');
-			graph.render($selected.data('id'));
+			$selectedTbl = $(this).addClass('selected');
+			graph.render($selectedTbl.data('id'));
 		});
 	}
 	
@@ -110,6 +118,7 @@ define(function(require, exports, module) {
 		initTableList();
 		initTableNameInput();
 		initDatabaseSelect();
+		initDepthSelect();
 		initRenderGraph();
 		initFullScreenBtn();
 		$(window).on('resize', resize);

@@ -23,15 +23,6 @@ define(function(require, exports, module) {
 	var instance1 = null,
 		instance2 = null;
 	
-/*	jsPlumb.bind('ready', function() {
-		instance1 = jsPlumb.getInstance($.extend({
-			Connector: 'Straight'
-		}, defaultOptions));
-		instance2 = jsPlumb.getInstance($.extend({
-			Connector: 'StateMachine'
-		}, defaultOptions));
-	});*/
-	
 	function render(tableId) {
 		var depth = $('#J_depth').val();
 		var url = '/table/graph/' + tableId + '?depth=' + depth;
