@@ -128,8 +128,8 @@ define(function(require, exports, module) {
 			.text(tbl.tableName)
 			.addClass('tbl-wrapper')
 			.css($.extend({
-				left: left,
-				top: top
+				left: left + 10,
+				top: top + 10
 			}, tbl.style))
 			.appendTo('#J_canvas');
 	}

@@ -6,10 +6,12 @@ define(function(require, exports, module) {
 		$ = require('jquery'),
 		graph = require('app/tableinfo/graph');
 	
+	var full = false;	// 是否全屏
+	
 	function resize() {
 		var height = common.calSuitableHeight();
 		$('.tbl-list').height(height - 93);
-		$('#J_canvas').height(height - 10);
+		$('#J_canvas').height(height + (full ? 40 : 0));
 	}
 	
 	function initTableList() {
@@ -27,6 +29,28 @@ define(function(require, exports, module) {
 					.attr('title', v.database + '.' + v.tableName)
 			});
 			$('.tbl-list').empty().append($list).append('<div style="padding: 0px;"/>');
+		});
+	}
+	
+	function initFullScreenBtn() {
+		var fullScreenClass = 'glyphicon-fullscreen',
+			resizeSmallClass = 'glyphicon-resize-small';
+		$('#J_full_screen_btn').on('click', function() {
+			if (!full) {
+				$('#J_canvas_wrapper').addClass('full-screen');
+				$(this).children()
+					.removeClass(fullScreenClass)
+					.addClass(resizeSmallClass)
+					.attr('title', '返回');
+			} else {
+				$('#J_canvas_wrapper').removeClass('full-screen');
+				$(this).children()
+					.removeClass(resizeSmallClass)
+					.addClass(fullScreenClass)
+					.attr('title', '全屏');
+			}
+			full = !full;
+			resize();
 		});
 	}
 	
@@ -87,6 +111,7 @@ define(function(require, exports, module) {
 		initTableNameInput();
 		initDatabaseSelect();
 		initRenderGraph();
+		initFullScreenBtn();
 		$(window).on('resize', resize);
 	}
 	

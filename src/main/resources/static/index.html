@@ -87,7 +87,7 @@ span.cm-cm-overlay.cm-matchhighlight {
 }
 #J_canvas {
 	position: relative;
-	margin: 10px auto 0px;
+	margin: 0px;
 	overflow: auto;
 }
 .form-group {
@@ -101,10 +101,28 @@ span.cm-cm-overlay.cm-matchhighlight {
 	font-size: 12px;
 	border-radius: 5px;
 	cursor: pointer;
-	word-wrap: break-word; white-space: pre-wrap	
+	word-wrap: break-word; 
+	white-space: pre-wrap;
 }
 #J_canvas_wrapper {
 	border: 1px solid #ccc;
+	padding: 0px;
+	background-color: #fff;
+}
+#J_full_screen_btn {
+	font-size: 20px;
+	cursor: pointer;
+	background-color: #fff;
+	position: absolute;
+	right: 0px;
+	z-index: 10000;
+}
+.full-screen {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
 }
 </style>
 </head>
@@ -200,7 +218,13 @@ span.cm-cm-overlay.cm-matchhighlight {
 					</div>
 				</div>
 				<div id="J_canvas_wrapper" class="col-xs-8">
-					<div id="J_canvas"></div>
+					<div style="position: relative;">
+						<div id="J_full_screen_btn" title="全屏">
+							<span class="glyphicon glyphicon-fullscreen"></span>
+						</div>
+						<div id="J_canvas">
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
