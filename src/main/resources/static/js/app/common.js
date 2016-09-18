@@ -194,6 +194,14 @@ define(function(require, exports, module){
 		var url = options.url;
 		window.open(url, '_blank', winConfig);
 	}
+
+	/** 计算合适的高度 **/
+	function calSuitableHeight() {
+		var defaultWinHeight = 610,
+			minHeight = 400;
+		var height = $(window).height() - defaultWinHeight + minHeight;
+		return Math.max(height, minHeight);
+	}
 	
 	
 	module.exports = {
@@ -204,6 +212,7 @@ define(function(require, exports, module){
 		discardEmptyParams: discardEmptyParams,
 		submitForm: submitForm,
 		clearForm: clearForm,
-		openWin: openWin
+		openWin: openWin,
+		calSuitableHeight: calSuitableHeight
 	};
 });

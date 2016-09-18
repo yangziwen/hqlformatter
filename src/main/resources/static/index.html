@@ -66,6 +66,46 @@ span.cm-cm-overlay.cm-matchhighlight {
 .nav-tabs>li>a {
 	border-radius: 0px;
 }
+.tbl-list {
+	border: 1px solid #ccc;
+}
+.tbl-list div {
+	border-top: 1px solid #ccc;
+	margin-top: -1px;
+	cursor: pointer;
+	word-wrap: break-word; 
+	white-space: pre-wrap;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	text-align: center;
+}
+.tbl-list div:hover {
+	background-color: #eee;
+}
+.tbl-list div.selected {
+	background-color: #d9edf7;
+}
+#J_canvas {
+	position: relative;
+	margin: 10px auto 0px;
+	overflow: auto;
+}
+.form-group {
+	margin-bottom: 1px;
+}
+.tbl-wrapper {
+	position: absolute;
+	width: 120px;
+	border: 1px solid #ccc;
+	text-align: center;
+	font-size: 12px;
+	border-radius: 5px;
+	cursor: pointer;
+	word-wrap: break-word; white-space: pre-wrap	
+}
+#J_canvas_wrapper {
+	border: 1px solid #ccc;
+}
 </style>
 </head>
 <body>
@@ -87,6 +127,7 @@ span.cm-cm-overlay.cm-matchhighlight {
 			<ul class="nav nav-tabs" id="J_tabs">
 				<li class="active"><a id="J_prettify_tab">格式化HQL</a></li>
 				<li class="cursor-pointer"><a id="J_palo_tab">生成palo信息</a></li>
+				<li class="cursor-pointer"><a id="J_table_info_tab">查看表依赖</a></li>
 			</ul>
 			<div id="J_prettify_wrapper">
 				<div style="border: 1px solid #ccc; height: 430px;" >
@@ -117,6 +158,51 @@ span.cm-cm-overlay.cm-matchhighlight {
 					<pre id="J_paloTableSql" style="height: 215px; margin-top: 10px;"></pre>
 				</div>				
 			</div>
+			<div id="J_table_info_wrapper" class="hide">
+				<div class="col-xs-4" style="padding: 0px;">
+					<form class="form-horizontal">
+						<div class="form-group">
+							<label class="col-sm-2 control-label"><nobr>库名：</nobr></label>
+							<div class="col-sm-10">
+								<select id="J_database" class="form-control input-sm">
+									<option value="">全部</option>
+									<option>nuomi_crm_dp</option>
+									<option>nuomi_crm_dm</option>
+									<option>nuomi_crm_ods</option>
+									<option>nuomi</option>
+									<option>nuomi_crm_odps</option>
+									<option>nuomi_crm_data_back</option>
+									<option>tmp</option>
+									<option>basenew</option>
+									<option>pst</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"><nobr>表名：</nobr></label>
+							<div class="col-sm-10">
+								<input id="J_table_name" class="form-control input-sm" placeholder="请输入要查询的表名"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"><nobr>深度：</nobr></label>
+							<div class="col-sm-10">
+								<select id="J_depth" class="form-control input-sm">
+									<option value="">全部</option>
+									<option value="1" selected="selected">1层</option>
+									<option value="2">2层</option>
+									<option value="3">3层</option>
+								</select>
+							</div>
+						</div>
+					</form>
+					<div class="tbl-list" style="overflow-y: auto;">
+					</div>
+				</div>
+				<div id="J_canvas_wrapper" class="col-xs-8">
+					<div id="J_canvas"></div>
+				</div>
+			</div>
 		</div>
 	</div><!-- /row1 -->
 </div>
@@ -132,6 +218,7 @@ span.cm-cm-overlay.cm-matchhighlight {
 <script type="text/javascript" src="js/codemirror/mysql.js"></script>
 <script type="text/javascript" src="js/codemirror/placeholder.js"></script>
 <script type="text/javascript" src="js/zeroclipboard/ZeroClipboard.min.js"></script>
+<script type="text/javascript" src="js/jsplumb/jsPlumb-2.1.7-min.js"></script>
 <script>
 seajs.config({
 	base: './js/',

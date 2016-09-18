@@ -3,11 +3,13 @@ define(function(require, exports, module) {
 	"use strict";
 	
 	var prettify = require('app/prettify/index'),
-		palo = require('app/palo/index');
+		palo = require('app/palo/index'),
+		tableInfo = require('app/tableinfo/index');
 	
 	function init() {
 		prettify.init();
 		palo.init();
+		tableInfo.init();
 		initTabs();
 	}
 	
@@ -18,10 +20,10 @@ define(function(require, exports, module) {
 			$li.addClass('active').removeClass('cursor-pointer');
 			$li.siblings().removeClass('active').addClass('cursor-pointer')
 				.children('a').each(function(i, a) {
-					var id = $(a).attr('id').replace('_tab', '_wrapper');
+					var id = $(a).attr('id').replace(/_tab$/i, '_wrapper');
 					$('#' + id).addClass('hide');
 				});
-			$('#' + $a.attr('id').replace('_tab', '_wrapper')).removeClass('hide');
+			$('#' + $a.attr('id').replace(/_tab$/i, '_wrapper')).removeClass('hide');
 		});
 	}
 	

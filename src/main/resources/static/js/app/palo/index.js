@@ -36,11 +36,8 @@ define(function(require, exports, module) {
 	
 	function resizeCodeMirror() {
 		//-- 让CodeMirror对屏幕的高度自适应 --//
-		var defaultWinHeight = 610,
-			minCmHeight = 400;
+		var cmHeight = common.calSuitableHeight();
 		var $wrapper = $('#J_palo').parent();
-		var cmHeight = $(window).height() - defaultWinHeight + minCmHeight;
-		cmHeight = Math.max(cmHeight, minCmHeight);
 		if(cmHeight != $wrapper.height()) {
 			console.log(cmHeight);
 			$('style').filter(function(i, v) {
