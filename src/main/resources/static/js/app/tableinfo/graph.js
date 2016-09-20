@@ -20,8 +20,11 @@ define(function(require, exports, module) {
 		]
 	};
 	
-	var instance1 = null,
-		instance2 = null;
+	function newInstance() {
+		return jsPlumb.getInstance($.extend({
+			Connector: 'Straight'
+		}, defaultOptions));
+	}
 	
 	function render(tableId) {
 		var depth = $('#J_depth').val();
@@ -32,12 +35,6 @@ define(function(require, exports, module) {
 				return;
 			}
 			$('#J_canvas').children().remove();
-			instance1 = jsPlumb.getInstance($.extend({
-				Connector: 'Straight'
-			}, defaultOptions));
-			instance2 = jsPlumb.getInstance($.extend({
-				Connector: 'StateMachine'
-			}, defaultOptions));
 			doRender(result.data);
 		});
 	}
@@ -70,10 +67,13 @@ define(function(require, exports, module) {
 			}
 		}
 		
-		instance1.draggable($('.tbl-wrapper'));
 	}
 	
 	function batchConnectTableWrapper(graph) {
+		
+		var instance = newInstance();
+		
+		instance.draggable($('.tbl-wrapper'));
 		
 		var table = graph.table;
 		
@@ -82,22 +82,19 @@ define(function(require, exports, module) {
 			for (var j = 0; j < layer.length; j++) {
 				var tbl = layer[j];
 				for (var k = 0; k < tbl.derivedIds.length; k++) {
-					connectTableWrapper(instance1, tbl.id, tbl.derivedIds[k]);
+					connectTableWrapper(instance, tbl.id, tbl.derivedIds[k]);
 				}
 				
 			}
 		}
 		
 		for (var i = 0; i < table.derivedIds.length; i++) {
-			if (table.id == table.derivedIds[i]) {
-				connectTableWrapper(instance2, table.id, table.derivedIds[i]);
-			} else {
-				connectTableWrapper(instance1, table.id, table.derivedIds[i]);
-			}
+			var connector = table.id == table.derivedIds[i] ? 'StateMachine' : 'Straight';
+			connectTableWrapper(instance, table.id, table.derivedIds[i], connector);
 		}
 		
 		for (var i = 0; i < table.dependentIds.length; i++) {
-			connectTableWrapper(instance1, table.dependentIds[i], table.id);
+			connectTableWrapper(instance, table.dependentIds[i], table.id);
 		}
 		
 		for (var i = 0; i < graph.dependentLayers.length - 1; i++) {
@@ -105,7 +102,7 @@ define(function(require, exports, module) {
 			for (var j = 0; j < layer.length; j++) {
 				var tbl = layer[j];
 				for (var k = 0; k < tbl.dependentIds.length; k++) {
-					connectTableWrapper(instance1, tbl.dependentIds[k], tbl.id);
+					connectTableWrapper(instance, tbl.dependentIds[k], tbl.id);
 				}
 			}
 		}
@@ -125,11 +122,13 @@ define(function(require, exports, module) {
 			.appendTo('#J_canvas');
 	}
 	
-	function connectTableWrapper(instance, sourceId, targetId) {
+	function connectTableWrapper(instance, sourceId, targetId, connector) {
+		connector || (connector = 'Straight');
 		instance.connect({
 			source: 'tbl-wrapper-' + sourceId,
 			target: 'tbl-wrapper-' + targetId,
 			anchor: anchors,
+			connector: connector,
 			paintStyle: {strokeStyle: "#5c96bc", lineWidth: 2 }
 		});
 	}
