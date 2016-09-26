@@ -5,3 +5,6 @@
 - 目前仅支持如下关键字  
 `select`，`from`，`where`，`group by`，`join`，`inner join`，`left outer join`，`full outer join`，`semi join`，`on`，`union all`  
 `from`和各种`join`支持嵌套各种子查询
+
+## License
+Apache Licene 2.0
