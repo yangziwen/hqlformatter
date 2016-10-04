@@ -4,12 +4,14 @@ define(function(require, exports, module) {
 	
 	var prettify = require('app/prettify/index'),
 		palo = require('app/palo/index'),
-		tableInfo = require('app/tableinfo/index');
+		tableInfo = require('app/tableinfo/index'),
+		requestMapping = require('app/requestmapping/index');
 	
 	function init() {
 		prettify.init();
 		palo.init();
 		tableInfo.init();
+		requestMapping.init();
 		initTabs();
 	}
 	

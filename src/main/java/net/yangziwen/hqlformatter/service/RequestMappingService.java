@@ -45,7 +45,7 @@ public class RequestMappingService {
 	}
 	
 	public static void main(String[] args) {
-		File file = new File("d:/workspace40/baidu");
+		File file = new File("d:/workspace40/crm-dm-web");
 		List<Result> list = RequestMappingAnalyzer.analyze(file);
 		for (Result result : list) {
 			ensureRequestMappingInfoExist(new RequestMappingInfo(result));

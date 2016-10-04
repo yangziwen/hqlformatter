@@ -19,6 +19,12 @@
 		width:1600px;
 	}
 }
+thead {
+	background-color: #f5f5f5;
+}
+.table-bordered>thead>tr>th {
+	border-bottom-width: 0px;
+}
 .CodeMirror {
 	height: 425px;
 	border-radius: 0px;
@@ -125,6 +131,12 @@ span.cm-cm-overlay.cm-matchhighlight {
 	width: 100%;
 	height: 100%;
 }
+#J_request_mapping_tbody tr td {
+	word-wrap: break-word; 
+	white-space: pre-wrap;
+	max-width: 300px;
+	min-width: 100px;
+}
 </style>
 </head>
 <body>
@@ -147,6 +159,7 @@ span.cm-cm-overlay.cm-matchhighlight {
 				<li class="active"><a id="J_prettify_tab">格式化HQL</a></li>
 				<li class="cursor-pointer"><a id="J_palo_tab">生成palo信息</a></li>
 				<li class="cursor-pointer"><a id="J_table_info_tab">查看表依赖</a></li>
+				<li class="cursor-pointer"><a id="J_request_mapping_tab">查看url路由</a></li>
 			</ul>
 			<div id="J_prettify_wrapper">
 				<div style="border: 1px solid #ccc; height: 430px;" >
@@ -229,6 +242,53 @@ span.cm-cm-overlay.cm-matchhighlight {
 						<div id="J_canvas">
 						</div>
 					</div>
+				</div>
+			</div>
+			<div id="J_request_mapping_wrapper" class="hide" style="border-top: 1px solid #ccc">
+				<div class="row" style="margin-top: 10px;">
+					<div class="col-xs-6 form-horizontal">
+						<label class="col-sm-3 control-label"><nobr>项目名：</nobr></label>
+						<div class="col-sm-9">
+							<select id="J_project" class="form-control input-sm">
+								<option value="">全部</option>
+							</select>
+						</div>
+					</div>
+					<div class="col-xs-6 form-horizontal">
+						<label class="col-sm-3 control-label"><nobr>url：</nobr></label>
+						<div class="col-sm-9">
+							<input id="J_request_url" class="form-control input-sm" placeholder="请输入要查询的url"/>
+						</div>
+					</div>
+				</div>
+				<div class="row" style="margin-top: 10px;">
+					<div class="col-xs-6 form-horizontal">
+						<label class="col-sm-3 control-label"><nobr>类名：</nobr></label>
+						<div class="col-sm-9">
+							<input id="J_class_name" class="form-control input-sm" placeholder="请输入要查询的类名"/>
+						</div>
+					</div>
+					<div class="col-xs-6 form-horizontal">
+						<label class="col-sm-3 control-label"><nobr>方法名：</nobr></label>
+						<div class="col-sm-9">
+							<input id="J_method_name" class="form-control input-sm" placeholder="请输入要查询的方法名"/>
+						</div>
+					</div>
+				</div>
+				<hr style="margin: 10px 0px; border-top: 1px solid #ccc"/>
+				<div id="J_request_mapping_tbl_wrapper">
+					<table class="table table-condensed table-bordered table-hover">
+						<thead>
+							<tr>
+								<th style="min-width: 130px;">项目名</th>
+								<th>url</th>
+								<th>类名</th>
+								<th>方法名</th>
+							</tr>
+						</thead>
+						<tbody id="J_request_mapping_tbody">
+						</tbody>
+					</table>
 				</div>
 			</div>
 		</div>

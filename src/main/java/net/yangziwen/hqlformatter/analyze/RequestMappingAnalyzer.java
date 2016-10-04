@@ -33,7 +33,7 @@ public class RequestMappingAnalyzer {
 	
 	private static final Pattern REQUEST_MAPPING_PATTERN = Pattern.compile("@RequestMapping\\(\"([^\"]+)\"\\)");
 	
-	private static final Pattern METHOD_PATTERN = Pattern.compile("public\\s+([A-Z][\\w\\d_]*)\\s+(\\w[\\w\\d_]*)\\s*\\(([^\\{]*)\\)\\s*\\{");
+	private static final Pattern METHOD_PATTERN = Pattern.compile("public\\s+([A-Z][\\w\\d_<>\\?]*)\\s+(\\w[\\w\\d_]*)\\s*\\(([^\\{]*)\\)\\s*\\{");
 	
 	public static List<Result> analyze(File file) {
 		List<Result> resultList = new ArrayList<Result>();

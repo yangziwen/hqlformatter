@@ -7,6 +7,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.concurrent.TimeUnit;
 
+import net.yangziwen.hqlformatter.controller.RequestMappingController;
 import net.yangziwen.hqlformatter.controller.SqlController;
 import net.yangziwen.hqlformatter.controller.TableController;
 import net.yangziwen.hqlformatter.util.Utils;
@@ -61,6 +62,8 @@ public class Server {
 		SqlController.init();
 		
 		TableController.init();
+		
+		RequestMappingController.init();
 		
 	}
 	

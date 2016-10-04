@@ -2,6 +2,7 @@ package net.yangziwen.hqlformatter.service;
 
 import static net.yangziwen.hqlformatter.util.DataSourceFactory.getDataSource;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.yangziwen.hqlformatter.analyze.TableAnalyzer;
 import net.yangziwen.hqlformatter.analyze.TableAnalyzer.Result;
 import net.yangziwen.hqlformatter.model.TableInfo;
 import net.yangziwen.hqlformatter.model.TableRelation;
@@ -131,6 +133,12 @@ public class TableService {
 			newList.add(ensureTableInfoExist(table));
 		}
 		return newList;
+	}
+	
+	public static void main(String[] args) {
+		File file = new File("d:/workspace40/crm-dm-ares_42/自动绩效");
+		List<Result> list = TableAnalyzer.analyze(file);
+		persistTableRelation(list);
 	}
 	
 }
