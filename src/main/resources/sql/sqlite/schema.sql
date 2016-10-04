@@ -15,3 +15,14 @@ CREATE TABLE "table_relation" (
 	table_id integer NOT NULL,
 	dependent_table_id integer NOT NULL
 );
+
+-- request_mapping_info
+DROP TABLE IF EXISTS "request_mapping_info";
+CREATE TABLE "request_mapping_info" (
+	id integer PRIMARY KEY AUTOINCREMENT,
+	request_url varchar(50) NOT NULL,
+	project varchar(50) NOT NULL,
+	class_name varchar(50) NOT NULL,
+	method_name varchar(50) NOT NULL,
+	return_type varchar(50) NOT NULL
+);
