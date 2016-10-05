@@ -25,7 +25,7 @@ define(function(require, exports, module) {
 					.append($('<td>').text(className).attr('title', v.className))
 					.append($('<td>').text(v.methodName));
 			});
-			$('#J_request_mapping_tbody').empty().append($list);
+			$('#J_request_mapping_tbody').empty().append(renderTrs($list));
 		}).then(function(result) {
 			var list = $(result.data).map(function(i, v) {
 				return v.project;
@@ -53,14 +53,18 @@ define(function(require, exports, module) {
 	}
 	
 	function renderTrs($trs) {
+		var cnt = 0;
 		$($trs).each(function(i, tr) {
 			var $tr = $(tr);
 			if (doFilter($tr)) {
 				$tr.show();
+				cnt ++;
 			} else {
 				$tr.hide();
 			}
 		});
+		$('#J_request_mapping_tab').children('span').text(cnt);
+		return $trs;
 	}
 	
 	
