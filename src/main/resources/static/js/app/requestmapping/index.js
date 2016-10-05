@@ -115,11 +115,32 @@ define(function(require, exports, module) {
 		
 	}
 	
+	function resizeTable() {
+		var cmHeight = common.calSuitableHeight();
+		var $wrapper = $('#J_request_mapping_tbl_wrapper');
+		var $table = $wrapper.children('table').eq(0);
+		$wrapper.height(cmHeight - 100);
+	}
+	
+	function initTabActive() {
+		var inited = false;
+		$('#J_request_mapping_tab').on('tab-active', function() {
+			if (!inited) {
+				initMappingList();
+				inited = true;
+			}
+			resizeTable();
+		})
+	}
+	
 	function init() {
-		initMappingList();
+//		initMappingList();
+		initTabActive();
 		initRequestUrlInput();
 		initClassNameInput();
 		initMethodNameInput();
+		$(window).on('resize', resizeTable);
+//		$('#J_request_mapping_tab').on('tab-active', resizeTable);
 	}
 	
 	module.exports = {init: init};

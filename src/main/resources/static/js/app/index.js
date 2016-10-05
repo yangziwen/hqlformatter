@@ -26,6 +26,7 @@ define(function(require, exports, module) {
 					$('#' + id).addClass('hide');
 				});
 			$('#' + $a.attr('id').replace(/_tab$/i, '_wrapper')).removeClass('hide');
+			$a.trigger('tab-active');
 		});
 	}
 	

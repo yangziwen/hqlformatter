@@ -125,9 +125,21 @@ define(function(require, exports, module) {
 		});
 	}
 	
+	function initTabActive() {
+		var inited = false;
+		$('#J_table_info_tab').on('tab-active', function() {
+			if (inited) {
+				return;
+			}
+			initTableList();
+			inited = true;
+		});
+	}
+	
 	function init() {
 		resize();
-		initTableList();
+//		initTableList();
+		initTabActive();
 		initTableNameInput();
 		initDatabaseSelect();
 		initDepthSelect();
