@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import com.alibaba.fastjson.JSON;
-
 import net.yangziwen.hqlformatter.model.TableInfo;
 import net.yangziwen.hqlformatter.repository.base.QueryMap;
 import net.yangziwen.hqlformatter.service.TableService;
@@ -19,7 +17,6 @@ import net.yangziwen.hqlformatter.util.TableCache.RelationGraph;
 import net.yangziwen.hqlformatter.util.TableCache.TableWrapper;
 import spark.Request;
 import spark.Response;
-import spark.ResponseTransformer;
 import spark.Route;
 import spark.Spark;
 
@@ -43,12 +40,7 @@ public class TableController {
 				
 				return resultMap;
 			}
-		}, new ResponseTransformer() {
-			@Override
-			public String render(Object model) throws Exception {
-				return JSON.toJSONString(model);
-			}
-		});
+		}, JsonTransformer.instance());
 		
 		Spark.get("/table/graph/:tableId", new Route() {
 			@Override
@@ -79,12 +71,7 @@ public class TableController {
 				resultMap.put("data", graph);
 				return resultMap;
 			}
-		}, new ResponseTransformer() {
-			@Override
-			public String render(Object model) throws Exception {
-				return JSON.toJSONString(model);
-			}
-		});
+		}, JsonTransformer.instance());
 		
 	}
 
