@@ -12,16 +12,16 @@ import org.sql2o.Query;
 import net.yangziwen.hqlformatter.util.ReflectionUtils;
 
 public class BaseRepository<E> extends ReadOnlyBaseRepository<E> {
-	
+
 	protected BaseRepository(DataSource dataSource) {
 		super(dataSource);
 	}
-	
+
 	private static <T> String generateUpdateSql(ModelMapping<T> modelMapping, Map<String, Object> params) {
 		String idFieldName = modelMapping.getIdFieldName();
 		String idColumnName = modelMapping.getIdColumn();
 		Map<String, String> mappingWithoutId = modelMapping.getFieldColumnMappingWithoutIdField();
-		
+
 		StringBuilder updateBuff = new StringBuilder().append(" UPDATE ").append(modelMapping.getTable(params));
 		Entry<?, ?>[] entrys = mappingWithoutId.entrySet().toArray(new Entry[]{});
 		Entry<?, ?> entry = entrys[0];
@@ -31,13 +31,13 @@ public class BaseRepository<E> extends ReadOnlyBaseRepository<E> {
 			updateBuff.append(", ").append(entry.getValue()).append("=:").append(entry.getKey());
 		}
 		updateBuff.append(" WHERE ").append(idColumnName).append("=:").append(idFieldName);
-		
+
 		return updateBuff.toString();
 	}
-	
+
 	private static <T> String generateInsertSql(ModelMapping<T> modelMapping, Map<String, Object> params) {
 		Map<String, String> mappingWithoutId = modelMapping.getFieldColumnMappingWithoutIdField();
-		
+
 		StringBuilder insertBuff = new StringBuilder().append(" INSERT INTO ").append(modelMapping.getTable(params));
 		Entry<?, ?>[] entrys = mappingWithoutId.entrySet().toArray(new Entry[]{});
 		insertBuff.append(" ( ").append(entrys[0].getValue());
@@ -49,10 +49,10 @@ public class BaseRepository<E> extends ReadOnlyBaseRepository<E> {
 			insertBuff.append(", :").append(entrys[i].getKey());
 		}
 		insertBuff.append(" ) ");
-		
+
 		return insertBuff.toString();
 	}
-	
+
 	private void fillIdValue(E entity, Object id) {
 		Field idField = modelMapping.getIdField();
 		if (idField == null) {
@@ -68,11 +68,11 @@ public class BaseRepository<E> extends ReadOnlyBaseRepository<E> {
 			ReflectionUtils.setFieldValue(entity, idField, Long.valueOf(id.toString()));
 		}
 	}
-	
+
 	public void insert(E entity) {
 		insert(entity, EMPTY_PARAMS);
 	}
-	
+
 	public void insert(E entity, Map<String, Object> params) {
 		Connection conn = null;
 		try {
@@ -83,45 +83,47 @@ public class BaseRepository<E> extends ReadOnlyBaseRepository<E> {
 				if (field == null || idField == field) {
 					continue;
 				}
-				query.addParameter(field.getName(), ReflectionUtils.getFieldValue(entity, field));
-			}	
+				Object value = ReflectionUtils.getFieldValue(entity, field);
+				query.addParameter(field.getName(), value);
+			}
 			Object id = query.executeUpdate().getKey();
 			fillIdValue(entity, id);
 		} finally {
 			conn.close();
 		}
 	}
-	
+
 	public void update(E entity) {
 		update(entity, EMPTY_PARAMS);
 	}
-	
+
 	public void update(E entity, Map<String, Object> params) {
 		Connection conn = null;
 		try {
 			conn = sql2o.open();
 			Query query = conn.createQuery(generateUpdateSql(modelMapping, params));
 			for (Field field : modelMapping.getFields()) {
-				query.addParameter(field.getName(), ReflectionUtils.getFieldValue(entity, field));
-			}	
+			    Object value = ReflectionUtils.getFieldValue(entity, field);
+				query.addParameter(field.getName(), value);
+			}
 			query.executeUpdate();
 		} finally {
 			conn.close();
 		}
 	}
-	
+
 	public void delete(E entity) {
 		delete(entity, EMPTY_PARAMS);
 	}
-	
+
 	public void delete(E entity, Map<String, Object> params) {
 		deleteById(ReflectionUtils.<Long>getFieldValue(entity, modelMapping.getIdField()), params);
 	}
-	
+
 	public void deleteById(Long id) {
 		deleteById(id, EMPTY_PARAMS);
 	}
-	
+
 	public void deleteById(Long id, Map<String, Object> params) {
 		String sql = "DELETE FROM " + modelMapping.getTable(params) + " WHERE " + modelMapping.getIdColumn() + " = :id";
 		Connection conn = null;
@@ -131,7 +133,7 @@ public class BaseRepository<E> extends ReadOnlyBaseRepository<E> {
 			conn.close();
 		}
 	}
-	
+
 	public void deleteByParams(Map<String, Object> params) {
 		StringBuilder sqlBuff = new StringBuilder("DELETE FROM ")
 				.append(modelMapping.getTable(params));
@@ -147,7 +149,7 @@ public class BaseRepository<E> extends ReadOnlyBaseRepository<E> {
 		} finally {
 			conn.close();
 		}
-		
+
 	}
-	
+
 }
