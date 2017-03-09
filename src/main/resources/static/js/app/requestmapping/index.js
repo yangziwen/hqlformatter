@@ -40,8 +40,17 @@ define(function(require, exports, module) {
 		if (queryInfo.project && $tr.data('project') != queryInfo.project) {
 			return false;
 		}
-		if (queryInfo.url && $tr.data('url').indexOf(queryInfo.url) == -1) {
-			return false;
+		if (queryInfo.url) {
+			try {
+				var urlPattern = new RegExp(queryInfo.url);
+				if (!urlPattern.test($tr.data('url'))) {
+					return false;
+				}
+			} catch (e) {
+				if ($tr.data('url').indexOf(queryInfo.url) == -1) {
+					return false;
+				}
+			}
 		}
 		if (queryInfo.className && $tr.data('className').indexOf(queryInfo.className) == -1) {
 			return false;
