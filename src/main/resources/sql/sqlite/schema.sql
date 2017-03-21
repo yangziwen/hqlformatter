@@ -26,3 +26,15 @@ CREATE TABLE "request_mapping_info" (
 	method_name varchar(50) NOT NULL,
 	return_type varchar(50) NOT NULL
 );
+
+-- style_report
+DROP TABLE IF EXISTS "style_report";
+CREATE TABLE "style_report" (
+	id integer PRIMARY KEY AUTOINCREMENT,
+	file_path varchar(255) NOT NULL,
+	file_name varchar(50) NOT NULL,
+	line_number integer NOT NULL,
+	line_content varchar(255) NOT NULL,
+	capture varchar(50) NOT NULL,
+	suggest varchar(255)
+);

@@ -9,28 +9,29 @@ import java.util.concurrent.TimeUnit;
 
 import net.yangziwen.hqlformatter.controller.RequestMappingController;
 import net.yangziwen.hqlformatter.controller.SqlController;
+import net.yangziwen.hqlformatter.controller.StyleReportController;
 import net.yangziwen.hqlformatter.controller.TableController;
 import net.yangziwen.hqlformatter.util.Utils;
 import spark.Spark;
 
 public class Server {
-	
+
 	public static final int DEFAULT_PORT = 8060;
-	
+
 	public static void main(String[] args) throws IOException {
-		
+
 		final int port = getPort();
-		
+
 		if(!isPortAvailable("0.0.0.0", port)) {
 			System.out.println(String.format("当前端口[%d]已被占用，请按回车键退出。", port));
 			new BufferedReader(new InputStreamReader(System.in)).readLine();
 			System.exit(0);
 		}
-		
+
 		Spark.port(port);
-		
+
 		Spark.staticFileLocation("/static");
-		
+
 		// 看上去没有办法获取底层的jettyServer
 		// 因此没法通过LifeCycleLisener来注册开启浏览器的操作
 		new Thread(new Runnable() {
@@ -44,11 +45,11 @@ public class Server {
 				openApp(port);
 			}
 		}).start();
-		
+
 		initControllers();
-		
+
 	}
-	
+
 	private static int getPort() {
 		try {
 			return Integer.valueOf(System.getProperty("port"));
@@ -56,17 +57,19 @@ public class Server {
 			return DEFAULT_PORT;
 		}
 	}
-	
+
 	private static void initControllers() {
-		
+
 		SqlController.init();
-		
+
 		TableController.init();
-		
+
 		RequestMappingController.init();
-		
+
+		StyleReportController.init();
+
 	}
-	
+
 	private static void openApp(int port) {
 		String url = "http://localhost:" + port;
 		Boolean autoOpen = false;
@@ -87,7 +90,7 @@ public class Server {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private static boolean isPortAvailable(String host, int port) {
 		Socket s = new Socket();
 		try {
@@ -99,7 +102,7 @@ public class Server {
 			Utils.closeQuietly(s);
 		}
 	}
-	
+
 	private static boolean isWindows() {
 		String osName = System.getProperty("os.name");
 		if(osName == null || osName.trim().length() == 0) {
