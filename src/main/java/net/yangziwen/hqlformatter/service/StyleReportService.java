@@ -26,8 +26,8 @@ public class StyleReportService {
 
     private static StyleReportRepo styleReportRepo = new StyleReportRepo(getDataSource());
 
-    public static List<StyleReport> getStyleReportList() {
-        return styleReportRepo.list();
+    public static List<StyleReport> getStyleReportList(int offset, int limit , Map<String, Object> params) {
+        return styleReportRepo.list(offset, limit, params);
     }
 
     public static Map<String, String> collectColorVariables(File... files) {
