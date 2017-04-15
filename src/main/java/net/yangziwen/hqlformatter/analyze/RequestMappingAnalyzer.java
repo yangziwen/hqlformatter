@@ -24,23 +24,29 @@ import net.yangziwen.hqlformatter.util.StringUtils;
 import net.yangziwen.hqlformatter.util.Utils;
 
 public class RequestMappingAnalyzer {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(RequestMappingAnalyzer.class);
-	
+
 	private static final Pattern PACKAGE_PATTENR = Pattern.compile("package (.+);");
-	
+
 	private static final Pattern CLASS_PATTERN = Pattern.compile("\\s+class\\s+([A-Z][\\w\\d_]*)\\s*(?:extends .*?)?(?:implements .*?)?\\{[\\w\\W]*\\}\\s*$");
-	
+
 	private static final Pattern REQUEST_MAPPING_PATTERN = Pattern.compile("@RequestMapping\\(.*?(?:value\\s*=\\s*)?\"([^\"]*?)\"[^\\)]*?\\)");
-	
+
 	private static final Pattern METHOD_PATTERN = Pattern.compile("public\\s+([\\w\\d_<>, \\?]*)\\s+(\\w[\\w\\d_]*)\\s*\\(([^\\{]*)\\)\\s*(?:throws .*?)?\\{");
-	
+
+	private static final Pattern ACL_PATTERN = Pattern.compile("@Acl\\(\\{([\\w\\W]+?)\\}\\)");
+
+	private static final Pattern ACL_ITEM_ROLE_PATTERN = Pattern.compile("roles\\s*=\\s*\\{([^\\}]+?)\\}");
+
+	private static final Pattern ACL_ITEM_TARGET_PATTERN = Pattern.compile("convert\\s*=\\s*\".+?\\((.+?)\\)\"");
+
 	public static List<Result> analyze(File file) {
 		List<Result> resultList = new ArrayList<Result>();
 		analyze0(file, resultList);
 		return resultList;
 	}
-	
+
 	private static void analyze0(File file, List<Result> resultList) {
 		Project project = null;
 		if (file == null || !file.exists()) {
@@ -72,7 +78,7 @@ public class RequestMappingAnalyzer {
 		}
 		resultList.addAll(doAnalyze(file));
 	}
-	
+
 	private static List<Result> doAnalyze(File file) {
 		List<Result> resultList = new ArrayList<Result>();
 		BufferedReader reader = null;
@@ -87,23 +93,24 @@ public class RequestMappingAnalyzer {
 			if (!content.contains("@Controller") && !content.contains("@RestController")) {
 				return Collections.emptyList();
 			}
-			
+
 			Matcher packageMatcher = PACKAGE_PATTENR.matcher(content);
 			if (!packageMatcher.find()) {
 				logger.error("failed to parse package of file[{}]", file.getAbsolutePath());
 				return Collections.emptyList();
 			}
 			String packageName = packageMatcher.group(1);
-			
+
 			Matcher classMatcher = CLASS_PATTERN.matcher(content);
 			if (!classMatcher.find()) {
 				logger.error("failed to parse class of file[{}]", file.getAbsolutePath());
 				return Collections.emptyList();
 			}
 			String className = classMatcher.group(1);
-			
+
 			Matcher requestMappingMatcher = REQUEST_MAPPING_PATTERN.matcher(content);
 			String baseUrl = "";
+			int lastMethodEnd = 0;
 			while (requestMappingMatcher.find()) {
 				if (requestMappingMatcher.start() < classMatcher.start()) {
 					baseUrl = requestMappingMatcher.group(1);
@@ -116,7 +123,9 @@ public class RequestMappingAnalyzer {
 					result.setClassName(packageName + "." + className);
 					result.setReturnType(methodMatcher.group(1));
 					result.setMethodName(methodMatcher.group(2));
+					result.setAuthorities(parseAuthorities(content, lastMethodEnd, methodMatcher.start()));
 					resultList.add(result);
+					lastMethodEnd = methodMatcher.end();
 				}
 			}
 		} catch (Exception e) {
@@ -126,13 +135,35 @@ public class RequestMappingAnalyzer {
 		}
 		return resultList;
 	}
-	
+
+	private static List<String> parseAuthorities(String content, int start, int end) {
+	    Matcher aclMatcher = ACL_PATTERN.matcher(content);
+	    if (!aclMatcher.find(start)) {
+	        return Collections.emptyList();
+	    }
+	    List<String> authorities = new ArrayList<String>();
+	    String aclItems = aclMatcher.group(1);
+	    for (String item : aclItems.split("@AclItem")) {
+	        if (StringUtils.isBlank(item)) {
+	            continue;
+	        }
+	        Matcher roleMatcher = ACL_ITEM_ROLE_PATTERN.matcher(item);
+	        Matcher targetMatcher = ACL_ITEM_TARGET_PATTERN.matcher(item);
+	        if(roleMatcher.find() && targetMatcher.find()) {
+	            String role = roleMatcher.group(1).replaceAll("\"", "").toLowerCase();
+	            String target = targetMatcher.group(1);
+	            authorities.add(target + ":" + role);
+	        }
+	    }
+	    return authorities;
+	}
+
 	public static class Project {
-		
+
 		private String groupId;
-		
+
 		private String artifactId;
-		
+
 		private String version;
 
 		public String getGroupId() {
@@ -158,7 +189,7 @@ public class RequestMappingAnalyzer {
 		public void setVersion(String version) {
 			this.version = version;
 		}
-		
+
 		private static Project fromPom(File pom) {
 			try {
 				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -172,13 +203,13 @@ public class RequestMappingAnalyzer {
 					Node node = list.item(i);
 					if ("groupId".equals(node.getNodeName())) {
 						project.setGroupId(node.getTextContent());
-					} 
+					}
 					else if ("artifactId".equals(node.getNodeName())) {
 						project.setArtifactId(node.getTextContent());
-					} 
+					}
 					else if ("version".equals(node.getNodeName())) {
 						project.setVersion(node.getTextContent());
-					} 
+					}
 					else if ("parent".equals(node.getNodeName())) {
 						parentEle = (Element) node;
 					}
@@ -195,36 +226,41 @@ public class RequestMappingAnalyzer {
 				return null;
 			}
 		}
-		
+
 	}
-	
+
 	public static class Result {
-		
+
 		/**
 		 * 项目信息
 		 */
 		private Project project;
-		
+
 		/**
 		 * 请求url
 		 */
 		private String requestUrl;
-		
+
 		/**
 		 * 类名(包括包名)
 		 */
 		private String className;
-		
+
 		/**
 		 * 方法名
 		 */
 		private String methodName;
-		
+
+		/**
+		 * 权限注解
+		 */
+		private List<String> authorities;
+
 		/**
 		 * 返回值
 		 */
 		private String returnType;
-		
+
 		public Project getProject() {
 			return project;
 		}
@@ -257,14 +293,22 @@ public class RequestMappingAnalyzer {
 			this.methodName = methodName;
 		}
 
-		public String getReturnType() {
+		public List<String> getAuthorities() {
+            return authorities;
+        }
+
+        public void setAuthorities(List<String> authorities) {
+            this.authorities = authorities;
+        }
+
+        public String getReturnType() {
 			return returnType;
 		}
 
 		public void setReturnType(String returnType) {
 			this.returnType = returnType;
 		}
-		
+
 	}
-	
+
 }

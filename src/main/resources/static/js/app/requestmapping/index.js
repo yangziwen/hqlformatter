@@ -18,12 +18,13 @@ define(function(require, exports, module) {
 					.data('project', v.project.toLowerCase())
 					.data('url', v.requestUrl.toLowerCase())
 					.data('className', className.toLowerCase())
-					.data('methodName', v.methodName.toLowerCase());
+					.data('methodName', v.methodName.toLowerCase())
+					.data('authorities', v.authorities.toLowerCase());
 				return $tr
 					.append($('<td>').text(v.project))
 					.append($('<td>').text(v.requestUrl))
 					.append($('<td>').text(className).attr('title', v.className))
-					.append($('<td>').text(v.methodName));
+					.append($('<td>').text(v.methodName + (v.authorities ? '\n(' + v.authorities + ')' : '')));
 			});
 			$('#J_request_mapping_tbody').empty().append(renderTrs($list));
 		}).then(function(result) {

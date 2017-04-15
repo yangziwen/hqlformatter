@@ -5,38 +5,43 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import net.yangziwen.hqlformatter.analyze.RequestMappingAnalyzer;
+import net.yangziwen.hqlformatter.util.StringUtils;
 
 @Table(name = "request_mapping_info")
 public class RequestMappingInfo {
-	
+
 	@Id
 	@Column
 	private Long id;
-	
+
 	@Column
 	private String requestUrl;
-	
+
 	@Column
 	private String project;
-	
+
 	@Column
 	private String className;
-	
+
 	@Column
 	private String methodName;
-	
+
+	@Column
+	private String authorities;
+
 	@Column
 	private String returnType;
-	
+
 	public RequestMappingInfo() {
-		
+
 	}
-	
+
 	public RequestMappingInfo(RequestMappingAnalyzer.Result result) {
 		this.requestUrl = result.getRequestUrl();
 		this.project = result.getProject().getArtifactId();
 		this.className = result.getClassName();
 		this.methodName = result.getMethodName();
+		this.authorities = StringUtils.join(result.getAuthorities(), ",");
 		this.returnType = result.getReturnType();
 	}
 
@@ -80,12 +85,20 @@ public class RequestMappingInfo {
 		this.methodName = methodName;
 	}
 
-	public String getReturnType() {
+	public String getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(String authorities) {
+        this.authorities = authorities;
+    }
+
+    public String getReturnType() {
 		return returnType;
 	}
 
 	public void setReturnType(String returnType) {
 		this.returnType = returnType;
 	}
-	
+
 }

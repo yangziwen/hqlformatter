@@ -24,6 +24,7 @@ CREATE TABLE "request_mapping_info" (
 	project varchar(50) NOT NULL,
 	class_name varchar(50) NOT NULL,
 	method_name varchar(50) NOT NULL,
+	authorities varchar(100),
 	return_type varchar(50) NOT NULL
 );
 
